@@ -1,0 +1,167 @@
+[
+  {
+    "id": "REG-01",
+    "name": "Revision matches the drawing register",
+    "type": "register_revision",
+    "severity": "critical",
+    "clause": "MOCK-PROC 4.2",
+    "standard": "MOCK-PROC Document Control Procedure",
+    "edition": 2025,
+    "demo_state": "approved"
+  },
+  {
+    "id": "REG-02",
+    "name": "Title block status matches the register",
+    "type": "register_status",
+    "severity": "major",
+    "clause": "MOCK-PROC 4.3",
+    "standard": "MOCK-PROC Document Control Procedure",
+    "edition": 2025,
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-01",
+    "name": "Drawing is approved for production",
+    "type": "approval_status",
+    "severity": "critical",
+    "clause": "MOCK-CUST 2.1",
+    "standard": "MOCK-CUST HULL SPEC 100",
+    "edition": 2023,
+    "params": { "allowed": ["APPROVED"] },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-02",
+    "name": "Cited standards are the current edition",
+    "type": "standard_edition",
+    "severity": "major",
+    "clause": "MOCK-CLS 1.1.4",
+    "standard": "MOCK-CLS STEEL SHIP RULES",
+    "edition": 2024,
+    "params": { "required": { "MOCK-CLS STEEL SHIP RULES": 2024, "MOCK-CUST HULL SPEC 100": 2023 } },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-03",
+    "name": "Material grade is an allowed hull steel grade",
+    "type": "allowed_grades",
+    "severity": "critical",
+    "clause": "MOCK-CLS 3.2.1",
+    "standard": "MOCK-CLS STEEL SHIP RULES",
+    "edition": 2024,
+    "params": { "grades": ["A", "B", "AH32", "AH36", "DH36", "EH36"] },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-04",
+    "name": "Plate thickness meets the absolute minimum",
+    "type": "min_thickness",
+    "severity": "critical",
+    "clause": "MOCK-CLS 3.4.2",
+    "standard": "MOCK-CLS STEEL SHIP RULES",
+    "edition": 2024,
+    "params": { "min_mm": 6 },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-05",
+    "name": "Mandatory notes are present",
+    "type": "mandatory_notes",
+    "severity": "major",
+    "clause": "MOCK-CUST 5.3",
+    "standard": "MOCK-CUST HULL SPEC 100",
+    "edition": 2023,
+    "params": { "notes": ["ALL DIMENSIONS IN MM", "WELDING AS PER APPROVED WPS", "EDGE PREPARATION AS PER SHIPYARD STANDARD"] },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-06",
+    "name": "Recommended notes are present",
+    "type": "mandatory_notes",
+    "severity": "minor",
+    "clause": "MOCK-CUST 5.4",
+    "standard": "MOCK-CUST HULL SPEC 100",
+    "edition": 2023,
+    "params": { "notes": ["DO NOT SCALE DRAWING"] },
+    "demo_state": "approved"
+  },
+  {
+    "id": "BOM-01",
+    "name": "Parts list agrees with the ERP bill of materials",
+    "type": "bom_consistency",
+    "severity": "major",
+    "clause": "MOCK-PROC 5.2",
+    "standard": "MOCK-PROC Document Control Procedure",
+    "edition": 2025,
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-08",
+    "name": "Plate thickness meets the requirement calculated for its zone",
+    "type": "required_thickness",
+    "severity": "critical",
+    "clause": "MOCK-CLS 4.2.3",
+    "standard": "MOCK-CLS STEEL SHIP RULES",
+    "edition": 2024,
+    "params": {
+      "member": "PLATE",
+      "formulas": {
+        "DECK": "4.5 + 0.04 * L",
+        "SIDE SHELL": "5.0 + 0.045 * L",
+        "BULKHEAD": "4.0 + 0.005 * s",
+        "MACHINERY SEATING": "8 + 0.05 * L"
+      }
+    },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-09",
+    "name": "Stiffener spacing is within the limit for its zone",
+    "type": "max_spacing",
+    "severity": "major",
+    "clause": "MOCK-CLS 4.3.1",
+    "standard": "MOCK-CLS STEEL SHIP RULES",
+    "edition": 2024,
+    "params": { "limits_mm": { "DECK": 750, "SIDE SHELL": 750, "BULKHEAD": 800, "MACHINERY SEATING": 650 } },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-10",
+    "name": "Thick plate in a zone uses a higher steel grade",
+    "type": "grade_by_zone",
+    "severity": "critical",
+    "clause": "MOCK-CLS 3.2.4",
+    "standard": "MOCK-CLS STEEL SHIP RULES",
+    "edition": 2024,
+    "params": {
+      "member": "PLATE",
+      "zones": {
+        "SIDE SHELL": [{ "over_mm": 12.5, "grades": ["DH36", "EH36"] }],
+        "DECK": [{ "over_mm": 15, "grades": ["DH36", "EH36"] }]
+      }
+    },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-11",
+    "name": "Stiffener count on the sheet agrees with the parts list",
+    "type": "count_matches_parts",
+    "severity": "major",
+    "clause": "MOCK-PROC 5.4",
+    "standard": "MOCK-PROC Document Control Procedure",
+    "edition": 2025,
+    "params": { "pattern": "(\\d+) NOS\\. HP STIFFENERS", "part": "HP STIFFENER" },
+    "demo_state": "approved"
+  },
+  {
+    "id": "CHK-07",
+    "name": "Weld symbol legend is present",
+    "type": "mandatory_notes",
+    "severity": "major",
+    "clause": "MOCK-CUST 5.6",
+    "standard": "MOCK-CUST HULL SPEC 100",
+    "edition": 2023,
+    "params": { "notes": ["WELD SYMBOL LEGEND"] },
+    "demo_state": "draft"
+  }
+]

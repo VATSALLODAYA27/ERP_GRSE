@@ -1,0 +1,11 @@
+# Installed packages, build output and the tool's own data: not project code.
+node_modules/
+.venv/
+dist/
+var/
+__pycache__/
+demo/drawings/
+demo/*.mp4
+demo/*.webm
+docs/*.pdf
+docs/*.docx

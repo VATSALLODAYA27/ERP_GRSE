@@ -1,0 +1,21 @@
+# Secrets and the tool's own data: never on GitHub.
+backend/.env
+backend/var/
+
+# The GAINS application carries the company's PAN, GST and contact details. Remove these two lines to publish it.
+docs/GAINS2026_Xarka_SENTINEL.docx
+docs/GAINS2026_Xarka_SENTINEL.pdf
+
+# Installed packages and build output: recreated by npm install / pip install / npm run build.
+backend/.venv/
+frontend/node_modules/
+frontend/dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# graphify's code map: generated, rebuilt any time with "graphify update ."
+graphify-out/
+
+# Claude Code's personal settings on this machine.
+.claude/settings.local.json

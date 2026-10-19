@@ -1,0 +1,6 @@
+[
+  {"username": "Admin_123", "name": "Administrator", "role": "admin", "password": "Admin@123"},
+  {"username": "engineer", "name": "S. Mukherjee", "role": "engineer", "password": "password"},
+  {"username": "engineer2", "name": "P. Nair", "role": "engineer", "password": "bulkhead-2026"},
+  {"username": "reviewer", "name": "A. Roy", "role": "reviewer", "password": "class-rules-2026"}
+]
