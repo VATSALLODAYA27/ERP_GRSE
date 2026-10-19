@@ -1,9 +1,9 @@
 import { Card, Input, Table, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 
 import { formatTime, useAudit, type AuditEntry } from '../api'
+import { AuditTarget } from '../components/erp/Bits'
 import { ErrorAlert } from '../components/Tags'
 
 const ACTION_COLOR: Record<string, string> = { 'login.failed': 'error', 'decision.override': 'warning', 'decision.recorded': 'success' }
@@ -29,8 +29,8 @@ export default function AuditLog() {
     {
       title: 'Target',
       dataIndex: 'target',
-      width: 110,
-      render: (target: string) => (target.startsWith('check ') ? <Link to={`/checks/${target.slice(6)}`}>{target}</Link> : target),
+      width: 200,
+      render: (target: string) => <AuditTarget target={target} />,
     },
     { title: 'Detail', dataIndex: 'detail' },
   ]

@@ -703,3 +703,118 @@ body,
   font-weight: 500;
   opacity: 0.6;
 }
+
+/* ---- PRAVAH: the ERP pages ---- */
+
+/* Pass and fail cells (the 3-way match) and the plain CSS bar charts, in both modes. */
+:root {
+  --ok-bg: #e8f5ec;
+  --ok-text: #1e8e3e;
+  --bad-bg: #fdecec;
+  --bad-text: #c62828;
+  --bar: #4a64a6;
+}
+
+[data-theme='dark'] {
+  --ok-bg: rgba(76, 201, 127, 0.14);
+  --ok-text: #4cc97f;
+  --bad-bg: rgba(255, 123, 114, 0.14);
+  --bad-text: #ff9b9b;
+  --bar: #a1a1aa;
+}
+
+.ant-table-tbody > tr > td.cell-ok {
+  background: var(--ok-bg) !important;
+  color: var(--ok-text);
+}
+
+.ant-table-tbody > tr > td.cell-bad {
+  background: var(--bad-bg) !important;
+  color: var(--bad-text);
+  font-weight: 600;
+}
+
+/* Money tiles hold longer values than counts. */
+.kpi-value.compact {
+  font-size: 28px;
+  white-space: nowrap;
+}
+
+.kpi-sub {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* A shorter greeting banner for the control tower. */
+.hero.hero-slim {
+  padding: 24px 32px;
+}
+
+.hero.hero-slim p {
+  margin: 6px 0 16px;
+}
+
+/* Cards reached by a #link from a number tile clear the sticky header. */
+.ant-card[id] {
+  scroll-margin-top: 88px;
+}
+
+.outbox-item {
+  padding: 12px 14px;
+  border-left: 4px solid;
+  border-radius: 10px;
+  background: var(--row);
+}
+
+.flag-item .ant-tag {
+  margin-right: 6px;
+}
+
+.bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bar-row {
+  display: block;
+  color: inherit;
+  border-radius: 8px;
+}
+
+a.bar-row:hover .bar-track span {
+  filter: brightness(1.15);
+}
+
+.bar-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--tint);
+  overflow: hidden;
+}
+
+.bar-track span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--bar);
+  transition: width 0.4s ease;
+}
+
+.summary-row td {
+  background: var(--row);
+}
+
+/* A table opened inside a table row (journal lines) sits in the row; it must not get its own scrollbars. */
+.ant-table-expanded-row .ant-table-wrapper {
+  overflow: visible;
+}

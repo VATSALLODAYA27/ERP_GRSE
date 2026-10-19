@@ -8,9 +8,19 @@ import { postJson, type User } from '../api'
 
 type Turn = { role: 'user' | 'assistant'; content: string }
 
-// Starter questions for the page the person is on; any other page gets the Dashboard ones.
+// Starter questions for the page the person is on; any other page gets the Control Tower ones.
 const SUGGESTIONS: Record<string, string[]> = {
-  Dashboard: ['How many checks are waiting?', 'How do I check a drawing?', 'What can my role do?'],
+  'Control Tower': ['Which purchase orders are at risk?', 'What should we reorder?', 'Take me to the purchase orders'],
+  Requisitions: ['How do I raise a requisition?', 'Who approves a requisition?'],
+  'Purchase Orders': ['Which purchase orders are at risk?', 'Who can approve a purchase order?'],
+  'Goods Receipts': ['How do I receive goods?'],
+  'Vendor Invoices': ['What is a 3-way match?', 'Why is an invoice an exception?'],
+  Vendors: ['How is a vendor graded?'],
+  'Items & Stock': ['Which items are out of stock?', 'What should we reorder?'],
+  'Stock Ledger': ['How do I issue stock to a work order?'],
+  'General Ledger': ['Is the trial balance balanced?'],
+  Payables: ['What payables are due this week?'],
+  'Release Dashboard': ['How many checks are waiting?', 'How do I check a drawing?', 'What can my role do?'],
   'Drawing Register': ['How do I find a drawing?', 'Who can add a drawing?'],
   'New Check': ['What happens with a scanned drawing?', 'Why add the previous revision?'],
   Checks: ['How do I open a check report?', 'Who approves a check?'],
@@ -90,13 +100,13 @@ export default function Helper({ me, page }: { me: User; page: string }) {
         </span>
         <div>
           <strong>Navik</strong>
-          <span>GRSE drawing office helper</span>
+          <span>PRAVAH shipyard helper</span>
         </div>
         <Button type="text" icon={<MinusOutlined />} aria-label="Minimise the helper" onClick={() => setOpen(false)} />
       </header>
       <div className="helper-log" ref={log} aria-live="polite">
         <p className="helper-bubble">
-          Hello {me.name}! I am Navik, your guide to Sentinel. Ask me how anything on this site works.
+          Hello {me.name}! I am Navik, your guide to PRAVAH and Sentinel. Ask me how anything on this site works.
         </p>
         {turns.map((turn, i) => (
           <p key={i} className={turn.role === 'user' ? 'helper-bubble mine' : 'helper-bubble'}>
@@ -107,7 +117,7 @@ export default function Helper({ me, page }: { me: User; page: string }) {
         {ask.error && <p className="helper-bubble helper-error">{ask.error.message}</p>}
       </div>
       <div className="helper-chips">
-        {(SUGGESTIONS[page] ?? SUGGESTIONS.Dashboard).map((question) => (
+        {(SUGGESTIONS[page] ?? SUGGESTIONS['Control Tower']).map((question) => (
           <button key={question} type="button" disabled={ask.isPending} onClick={() => send(question)}>
             {question}
           </button>

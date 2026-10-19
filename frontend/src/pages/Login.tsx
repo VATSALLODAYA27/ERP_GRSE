@@ -1,4 +1,4 @@
-import { CheckCircleFilled, SafetyCertificateOutlined } from '@ant-design/icons'
+import { CheckCircleFilled, DeploymentUnitOutlined } from '@ant-design/icons'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Alert, Button, Flex, Form, Input, Radio, Tabs, Typography } from 'antd'
 import { useState } from 'react'
@@ -8,9 +8,9 @@ import ModeSwitch from '../components/ModeSwitch'
 import { ErrorAlert } from '../components/Tags'
 
 const FEATURES = [
-  'Every drawing is checked against the approved rule library',
-  'Work orders on a superseded or blocked revision are stopped at the gate',
-  'Every decision is recorded in the audit log',
+  'Procurement from requisition to payment, with late deliveries flagged early',
+  'Stock in every store, posted to a ledger that always balances',
+  'Sentinel release gate: no drawing reaches the shop floor unchecked',
 ]
 
 function SignIn() {
@@ -108,11 +108,11 @@ export default function Login() {
     <div className="login">
       <div className="login-art">
         <div className="brand">
-          <SafetyCertificateOutlined />
-          <span>Sentinel</span>
+          <DeploymentUnitOutlined />
+          <span>PRAVAH</span>
         </div>
         <div>
-          <h1>No drawing reaches the shop floor unchecked.</h1>
+          <h1>Material moves on time. Every rupee is accounted for.</h1>
           <ul>
             {FEATURES.map((feature) => (
               <li key={feature}>
@@ -121,7 +121,7 @@ export default function Login() {
             ))}
           </ul>
         </div>
-        <span>Pre-release gate for the design office</span>
+        <span>Shipyard ERP intelligence</span>
       </div>
       <Flex vertical justify="center" align="center" style={{ padding: 24 }}>
         <div style={{ width: '100%', maxWidth: 400 }}>
@@ -131,7 +131,7 @@ export default function Login() {
           <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 4 }}>
             Welcome
           </Typography.Title>
-          <Typography.Text type="secondary">Sign in to Sentinel, the drawing compliance checker.</Typography.Text>
+          <Typography.Text type="secondary">Sign in to PRAVAH, shipyard ERP intelligence.</Typography.Text>
           <Tabs
             style={{ marginTop: 16 }}
             items={[

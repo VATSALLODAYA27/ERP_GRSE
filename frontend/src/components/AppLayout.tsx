@@ -1,18 +1,28 @@
 import {
+  AppstoreOutlined,
   AuditOutlined,
   BookOutlined,
   DashboardOutlined,
+  DeploymentUnitOutlined,
+  FileAddOutlined,
   FileDoneOutlined,
   FileProtectOutlined,
   FileSearchOutlined,
+  FileTextOutlined,
+  InboxOutlined,
   LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PlusOutlined,
-  SafetyCertificateOutlined,
+  RadarChartOutlined,
+  ReconciliationOutlined,
+  ShopOutlined,
+  ShoppingCartOutlined,
   StopOutlined,
+  SwapOutlined,
   TableOutlined,
   TeamOutlined,
+  WalletOutlined,
 } from '@ant-design/icons'
 import { useQueryClient } from '@tanstack/react-query'
 import { Avatar, Button, Flex, Layout, Menu, Tooltip, Typography } from 'antd'
@@ -28,17 +38,42 @@ type NavItem = { key: string; label: string; hint: string; icon: ReactNode; show
 
 const NAV: { group: string; items: NavItem[] }[] = [
   {
-    group: 'Workspace',
+    group: 'Control tower',
     items: [
-      { key: '/', label: 'Dashboard', hint: 'What needs attention today', icon: <DashboardOutlined /> },
-      { key: '/register', label: 'Drawing Register', hint: 'Every drawing, its current revision and status', icon: <TableOutlined /> },
-      { key: '/checks/new', label: 'New Check', hint: 'Upload a drawing and check it against the rules', icon: <FileSearchOutlined /> },
-      { key: '/checks', label: 'Checks', hint: 'Every check that has been run', icon: <FileDoneOutlined /> },
+      { key: '/', label: 'Control Tower', hint: 'Deliveries at risk, anomalies and what to reorder, today', icon: <RadarChartOutlined /> },
+      { key: '/release', label: 'Release Dashboard', hint: 'Drawing checks and work orders that need attention', icon: <DashboardOutlined /> },
     ],
   },
   {
-    group: 'Release control',
+    group: 'Procurement',
     items: [
+      { key: '/requisitions', label: 'Requisitions', hint: 'Requests for material, waiting for approval or ordering', icon: <FileAddOutlined /> },
+      { key: '/purchase-orders', label: 'Purchase Orders', hint: 'Orders with vendors, their deliveries and delivery risk', icon: <ShoppingCartOutlined /> },
+      { key: '/receipts', label: 'Goods Receipts', hint: 'What arrived at the stores, accepted and rejected', icon: <InboxOutlined /> },
+      { key: '/invoices', label: 'Vendor Invoices', hint: 'Invoices matched against the order and the receipt', icon: <FileTextOutlined /> },
+      { key: '/vendors', label: 'Vendors', hint: 'Vendor scorecards: delivery, quality and spend (mock data)', icon: <ShopOutlined /> },
+    ],
+  },
+  {
+    group: 'Inventory',
+    items: [
+      { key: '/items', label: 'Items & Stock', hint: 'Every item, its stock in each store and its status', icon: <AppstoreOutlined /> },
+      { key: '/stock', label: 'Stock Ledger', hint: 'Every receipt, issue, transfer and adjustment', icon: <SwapOutlined /> },
+    ],
+  },
+  {
+    group: 'Finance',
+    items: [
+      { key: '/ledger', label: 'General Ledger', hint: 'Journal, trial balance and chart of accounts', icon: <ReconciliationOutlined /> },
+      { key: '/payables', label: 'Payables', hint: 'What is owed to vendors, aged by due date', icon: <WalletOutlined /> },
+    ],
+  },
+  {
+    group: 'Engineering release (Sentinel)',
+    items: [
+      { key: '/register', label: 'Drawing Register', hint: 'Every drawing, its current revision and status', icon: <TableOutlined /> },
+      { key: '/checks/new', label: 'New Check', hint: 'Upload a drawing and check it against the rules', icon: <FileSearchOutlined /> },
+      { key: '/checks', label: 'Checks', hint: 'Every check that has been run', icon: <FileDoneOutlined /> },
       { key: '/gate', label: 'Release Gate', hint: 'Which work orders may be released', icon: <StopOutlined /> },
       { key: '/class-approvals', label: 'Class Approvals', hint: 'Drawings waiting on class or customer approval', icon: <FileProtectOutlined /> },
       { key: '/rules', label: 'Rule Library', hint: 'The rules every check runs against', icon: <BookOutlined /> },
@@ -64,7 +99,11 @@ export default function AppLayout({ me }: { me: User }) {
   const groups = NAV.map((g) => ({ ...g, items: g.items.filter((item) => !item.show || item.show(me)) })).filter((g) => g.items.length)
   const nav = groups.flatMap((g) => g.items)
   // The longest matching path wins, so /checks/new selects "New Check" and /checks/7 selects "Checks".
-  const current = [...nav].sort((a, b) => b.key.length - a.key.length).find((item) => pathname.startsWith(item.key)) ?? nav[0]
+  // A whole path segment must match, so a page is never selected by a name that merely starts the same way.
+  const current =
+    [...nav].sort((a, b) => b.key.length - a.key.length).find((item) => pathname === item.key || pathname.startsWith(item.key === '/' ? '/' : `${item.key}/`)) ?? nav[0]
+  // A goods receipt opens in a drawer over the list, so opening one does not restart the page.
+  const pageKey = pathname.startsWith('/receipts') ? '/receipts' : pathname
 
   const signOut = async () => {
     await postJson('/auth/logout').catch(() => undefined)
@@ -79,11 +118,11 @@ export default function AppLayout({ me }: { me: User }) {
       <Layout.Sider theme="light" width={256} collapsed={collapsed} trigger={null} className="app-sider">
         <div className="app-sider-inner">
           <div className="brand">
-            <SafetyCertificateOutlined />
+            <DeploymentUnitOutlined />
             {!collapsed && (
               <span>
-                Sentinel
-                <small>Drawing compliance checker</small>
+                PRAVAH
+                <small>Shipyard ERP intelligence</small>
               </span>
             )}
           </div>
@@ -143,7 +182,7 @@ export default function AppLayout({ me }: { me: User }) {
         </Layout.Header>
         <Layout.Content style={{ padding: '8px 24px 32px' }}>
           {/* The key restarts the fade-in each time the page changes. */}
-          <div key={pathname} className="page">
+          <div key={pageKey} className="page">
             <Outlet />
           </div>
         </Layout.Content>
