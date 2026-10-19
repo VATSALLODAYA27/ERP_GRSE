@@ -69,7 +69,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
     ],
   },
   {
-    group: 'Engineering release (Sentinel)',
+    group: 'Engineering release',
     items: [
       { key: '/register', label: 'Drawing Register', hint: 'Every drawing, its current revision and status', icon: <TableOutlined /> },
       { key: '/checks/new', label: 'New Check', hint: 'Upload a drawing and check it against the rules', icon: <FileSearchOutlined /> },
@@ -121,7 +121,7 @@ export default function AppLayout({ me }: { me: User }) {
             <DeploymentUnitOutlined />
             {!collapsed && (
               <span>
-                PRAVAH
+                SENTINEL
                 <small>Shipyard ERP intelligence</small>
               </span>
             )}

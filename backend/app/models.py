@@ -219,9 +219,9 @@ class AuditEntry(Base):
     detail: Mapped[str]
 
 
-# --- PRAVAH ERP: procurement, inventory and finance. All written by the tool; every row in the demo is mock data. ---
+# --- SENTINEL ERP: procurement, inventory and finance. All written by the tool; every row in the demo is mock data. ---
 # shortcut: money is float rupees rounded to paise at each posting; use Numeric columns before real money is booked.
-# The extract table purchase_orders above stays as it is (Sentinel's impact view reads it); the ERP's own orders are proc_orders.
+# The extract table purchase_orders above stays as it is (the drawing gate's impact view reads it); the ERP's own orders are proc_orders.
 
 
 class Vendor(Base):

@@ -1,5 +1,5 @@
-// PRAVAH, the ERP half of the site: types, queries and actions for procurement, inventory, finance and the control tower.
-// Field names follow docs/PRAVAH_ERP_SPEC.md section 2.
+// SENTINEL, the ERP half of the site: types, queries and actions for procurement, inventory, finance and the control tower.
+// Field names follow docs/SENTINEL_ERP_SPEC.md section 2.
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { App as AntApp } from 'antd'
 import dayjs from 'dayjs'

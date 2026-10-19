@@ -146,7 +146,7 @@ export const PrLink = ({ no }: { no: string | null | undefined }) => (no ? <Link
 export const InvoiceLink = ({ no }: { no: string }) => <Link to={`/invoices/${enc(no)}`}>{no}</Link>
 export const GrnLink = ({ no }: { no: string }) => <Link to={`/receipts/${enc(no)}`}>{no}</Link>
 
-/** Work orders as tags. Each opens the Release Gate, where Sentinel says whether the job may be released. */
+/** Work orders as tags. Each opens the Release Gate, where the Drawing Release Gate says whether the job may be released. */
 export function WorkOrderTags({ orders }: { orders: (string | null | undefined)[] | null | undefined }) {
   const list = (orders ?? []).filter((o): o is string => !!o)
   if (!list.length) return <Typography.Text type="secondary">—</Typography.Text>

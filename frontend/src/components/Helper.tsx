@@ -100,13 +100,13 @@ export default function Helper({ me, page }: { me: User; page: string }) {
         </span>
         <div>
           <strong>Navik</strong>
-          <span>PRAVAH shipyard helper</span>
+          <span>SENTINEL shipyard helper</span>
         </div>
         <Button type="text" icon={<MinusOutlined />} aria-label="Minimise the helper" onClick={() => setOpen(false)} />
       </header>
       <div className="helper-log" ref={log} aria-live="polite">
         <p className="helper-bubble">
-          Hello {me.name}! I am Navik, your guide to PRAVAH and Sentinel. Ask me how anything on this site works.
+          Hello {me.name}! I am Navik, your guide to SENTINEL. Ask me how anything on this site works.
         </p>
         {turns.map((turn, i) => (
           <p key={i} className={turn.role === 'user' ? 'helper-bubble mine' : 'helper-bubble'}>

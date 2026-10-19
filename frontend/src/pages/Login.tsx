@@ -10,7 +10,7 @@ import { ErrorAlert } from '../components/Tags'
 const FEATURES = [
   'Procurement from requisition to payment, with late deliveries flagged early',
   'Stock in every store, posted to a ledger that always balances',
-  'Sentinel release gate: no drawing reaches the shop floor unchecked',
+  'Drawing release gate: no drawing reaches the shop floor unchecked',
 ]
 
 function SignIn() {
@@ -109,7 +109,7 @@ export default function Login() {
       <div className="login-art">
         <div className="brand">
           <DeploymentUnitOutlined />
-          <span>PRAVAH</span>
+          <span>SENTINEL</span>
         </div>
         <div>
           <h1>Material moves on time. Every rupee is accounted for.</h1>
@@ -131,7 +131,7 @@ export default function Login() {
           <Typography.Title level={2} style={{ marginTop: 0, marginBottom: 4 }}>
             Welcome
           </Typography.Title>
-          <Typography.Text type="secondary">Sign in to PRAVAH, shipyard ERP intelligence.</Typography.Text>
+          <Typography.Text type="secondary">Sign in to SENTINEL, shipyard ERP intelligence.</Typography.Text>
           <Tabs
             style={{ marginTop: 16 }}
             items={[

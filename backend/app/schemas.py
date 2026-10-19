@@ -129,7 +129,7 @@ class CheckOut(CheckSummary):
     comments: list[CommentOut]
 
 
-# --- PRAVAH ERP inputs. Codes are checked against the master data by the route; these only check the shape. ---
+# --- SENTINEL ERP inputs. Codes are checked against the master data by the route; these only check the shape. ---
 
 CODE = r"^[A-Za-z0-9][A-Za-z0-9._/-]{0,39}$"
 

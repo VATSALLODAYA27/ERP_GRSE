@@ -39,7 +39,7 @@ export default function App() {
   return (
     <Routes>
       <Route element={<AppLayout me={me.data} />}>
-        {/* PRAVAH: control tower, procurement, inventory and finance. */}
+        {/* SENTINEL: control tower, procurement, inventory and finance. */}
         <Route index element={<ControlTower me={me.data} />} />
         <Route path="requisitions" element={<Requisitions me={me.data} />} />
         <Route path="requisitions/:prNo" element={<RequisitionDetail me={me.data} />} />
@@ -57,7 +57,7 @@ export default function App() {
         <Route path="stock" element={<StockLedger me={me.data} />} />
         <Route path="ledger" element={<GeneralLedger />} />
         <Route path="payables" element={<Payables />} />
-        {/* Sentinel, the engineering release module. */}
+        {/* The Drawing Release Gate, the engineering release module. */}
         <Route path="release" element={<Dashboard me={me.data} />} />
         <Route path="register" element={<DrawingRegister me={me.data} />} />
         <Route path="register/:drawingNo" element={<DrawingDetail me={me.data} />} />

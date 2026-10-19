@@ -130,7 +130,7 @@ export default function ItemDetail({ me }: { me: User }) {
               children: (
                 <>
                   <Typography.Paragraph type="secondary">
-                    Drawings whose bill of materials lists this item, from Sentinel's drawing register. Open a drawing to see its revisions, work orders and release status.
+                    Drawings whose bill of materials lists this item, from the drawing register. Open a drawing to see its revisions, work orders and release status.
                   </Typography.Paragraph>
                   <Table
                     size="small"

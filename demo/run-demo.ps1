@@ -4,7 +4,7 @@ Starts the Drawing Compliance Checker demo as one process and opens it in the br
     .\demo\run-demo.ps1            keep earlier checks, decisions and comments (the normal way to run it)
     .\demo\run-demo.ps1 -Reset     start from an empty tool; the earlier data is moved to backend\var-archive, not deleted
 
-It installs what is missing, loads the mock ERP files from demo\register and the mock PRAVAH ERP data
+It installs what is missing, loads the mock ERP files from demo\register and the mock SENTINEL ERP data
 (vendors, stock, orders, bills, ledger; only when not loaded yet), creates the users in
 demo\demo_logins.json, builds the web app and serves everything on http://127.0.0.1:8000.
 Press Ctrl+C to stop.
@@ -48,7 +48,7 @@ if ($Reset -and (Test-Path $var)) {
 Push-Location $backend
 try {
     Step 'Loading the mock ERP register from demo\register' { & $python -m scripts.load_extract }
-    Step 'Loading the mock PRAVAH ERP data (first run only)' { & $python -m scripts.seed_erp }
+    Step 'Loading the mock SENTINEL ERP data (first run only)' { & $python -m scripts.seed_erp }
     Step 'Creating the demo users from demo\demo_logins.json' { & $python -m scripts.seed_users }
     Step 'Approving the demo rules (first run only)' { & $python -m scripts.approve_demo_rules }
     Step 'Building the web app' { npm --prefix $frontend run build --silent }

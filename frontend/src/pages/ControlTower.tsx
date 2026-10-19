@@ -392,7 +392,7 @@ function Reorder({ me }: { me: User }) {
   )
 }
 
-/** PRAVAH's home page: what needs attention across procurement, stores and payables today. */
+/** SENTINEL's home page: what needs attention across procurement, stores and payables today. */
 export default function ControlTower({ me }: { me: User }) {
   const overview = useOverview()
   const k = overview.data?.kpis
