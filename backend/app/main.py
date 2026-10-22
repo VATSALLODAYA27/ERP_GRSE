@@ -17,7 +17,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="SENTINEL: shipyard ERP intelligence", lifespan=lifespan,
-              description="DEMO: rules, clauses, vendors and all ERP data are mock data. The Drawing Release Gate is the engineering release module.")
+              description="Rules, clauses, vendors and all ERP data are representative data. The Drawing Release Gate is the engineering release module.")
 app.include_router(auth.router)
 app.include_router(auth.users)
 app.include_router(checks.router)

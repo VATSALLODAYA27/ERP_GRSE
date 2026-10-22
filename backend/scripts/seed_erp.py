@@ -1,7 +1,7 @@
-"""Load the DEMO ERP data: vendors, items, stores, opening stock, eight months of purchase history, open orders, bills,
-requisitions and stock issues. Every vendor, price and figure is invented and marked (mock); no real company is named.
+"""Load the representative ERP data: vendors, items, stores, opening stock, eight months of purchase history, open orders, bills,
+requisitions and stock issues. Every vendor, price and figure is invented and marked; no real company is named.
 
-Dates count back from today, so the demo always looks current, and a fixed random seed gives the same data every time.
+Dates count back from today, so the data always looks current, and a fixed random seed gives the same data every time.
 The history is booked through the real posting functions, so the ledger balances exactly as it would in use.
 Running it again changes nothing once the data is there; --reset deletes the ERP records (never Sentinel's checks,
 the register or the audit log) and loads them afresh.
@@ -17,29 +17,29 @@ from app import models
 from app.core import intel, ledger, procure
 from app.db import SessionLocal, migrate
 
-BUYER, STOREKEEPER, APPROVER, ADMIN, SETUP = "engineer", "engineer2", "reviewer", "Admin_123", "demo-setup"
+BUYER, STOREKEEPER, APPROVER, ADMIN, SETUP = "engineer", "engineer2", "reviewer", "Admin_123", "initial-setup"
 
 STORES = [
-    ("MW-STEEL", "Main Works steel stockyard", "Main Works, Kolkata (mock)"),
-    ("MW-GEN", "Main Works general stores", "Main Works, Kolkata (mock)"),
-    ("RBD-STEEL", "Rajabagan steel yard", "Rajabagan Dockyard, Kolkata (mock)"),
-    ("FOU-OUTFIT", "Fitting-out unit outfitting store", "Fitting-out unit, Kolkata (mock)"),
+    ("MW-STEEL", "Main Works steel stockyard", "Main Works, Kolkata"),
+    ("MW-GEN", "Main Works general stores", "Main Works, Kolkata"),
+    ("RBD-STEEL", "Rajabagan steel yard", "Rajabagan Dockyard, Kolkata"),
+    ("FOU-OUTFIT", "Fitting-out unit outfitting store", "Fitting-out unit, Kolkata"),
 ]
 
 # vendor_id, name, city, category, MSME, payment terms (days), lead time (days), delivery behaviour
 VENDORS = [
-    ("V-1001", "Rupnarayan Steel Stockists (mock)", "Kolkata", "Steel plate", False, 45, 30, "good"),
-    ("V-1002", "Ajay River Rolling Works (mock)", "Durgapur", "Sections", False, 30, 30, "late"),
-    ("V-1003", "Kharkai Plate Mills (mock)", "Jamshedpur", "Steel plate", False, 45, 35, "rejects"),
-    ("V-1004", "Rushikonda Pipe & Fittings (mock)", "Visakhapatnam", "Pipes & fittings", False, 30, 28, "fair"),
-    ("V-1005", "Mula-Mutha Valves (mock)", "Pune", "Valves", False, 45, 42, "fair"),
-    ("V-1006", "Adyar Cable Industries (mock)", "Chennai", "Electrical", False, 30, 21, "good"),
-    ("V-1007", "Worli Marine Outfitters (mock)", "Mumbai", "Outfitting", False, 45, 35, "fair"),
-    ("V-1008", "Barasat Weld Consumables (mock)", "Kolkata", "Consumables", True, 30, 10, "good"),
-    ("V-1009", "Salkia Marine Coatings (mock)", "Kolkata", "Consumables", True, 30, 14, "fair"),
-    ("V-1010", "Benachity Sections (mock)", "Durgapur", "Sections", True, 30, 21, "good"),
-    ("V-1011", "Hinjewadi Flow Controls (mock)", "Pune", "Valves", True, 45, 35, "fair"),
-    ("V-1012", "Ennore Electricals (mock)", "Chennai", "Electrical", True, 30, 18, "fair"),
+    ("V-1001", "Rupnarayan Steel Stockists", "Kolkata", "Steel plate", False, 45, 30, "good"),
+    ("V-1002", "Ajay River Rolling Works", "Durgapur", "Sections", False, 30, 30, "late"),
+    ("V-1003", "Kharkai Plate Mills", "Jamshedpur", "Steel plate", False, 45, 35, "rejects"),
+    ("V-1004", "Rushikonda Pipe & Fittings", "Visakhapatnam", "Pipes & fittings", False, 30, 28, "fair"),
+    ("V-1005", "Mula-Mutha Valves", "Pune", "Valves", False, 45, 42, "fair"),
+    ("V-1006", "Adyar Cable Industries", "Chennai", "Electrical", False, 30, 21, "good"),
+    ("V-1007", "Worli Marine Outfitters", "Mumbai", "Outfitting", False, 45, 35, "fair"),
+    ("V-1008", "Barasat Weld Consumables", "Kolkata", "Consumables", True, 30, 10, "good"),
+    ("V-1009", "Salkia Marine Coatings", "Kolkata", "Consumables", True, 30, 14, "fair"),
+    ("V-1010", "Benachity Sections", "Durgapur", "Sections", True, 30, 21, "good"),
+    ("V-1011", "Hinjewadi Flow Controls", "Pune", "Valves", True, 45, 35, "fair"),
+    ("V-1012", "Ennore Electricals", "Chennai", "Electrical", True, 30, 18, "fair"),
 ]
 GST_STATE = {"Kolkata": "19", "Durgapur": "19", "Jamshedpur": "20", "Visakhapatnam": "37", "Pune": "27", "Mumbai": "27", "Chennai": "33"}
 # Days late against the promised date for each vendor's successive deliveries (taken in turn, so every run is the same).
@@ -91,9 +91,9 @@ ITEMS = [
     ("OF-RAIL-SS", "Stainless handrail (6 m)", "Outfitting", "NOS", "SS316", 7800, 10, 20, 28, "V-1007", False, "FOU-OUTFIT", 24),
 ]
 BOM_PARTS = {row[0] for row in ITEMS[:10]}
-HISTORY_WORK_ORDERS = ["WO-23944", "WO-23951", "WO-23967", "WO-23978", "WO-23990"]  # earlier hulls' work orders (mock)
-REJECT_REASON = "Surface pitting beyond tolerance (mock)"
-OPENING_BANK = 60_000_000  # ₹6 crore in the bank when the books open (mock)
+HISTORY_WORK_ORDERS = ["WO-23944", "WO-23951", "WO-23967", "WO-23978", "WO-23990"]  # earlier hulls' work orders
+REJECT_REASON = "Surface pitting beyond tolerance"
+OPENING_BANK = 60_000_000  # ₹6 crore in the bank when the books open
 
 # Open orders: po_no, vendor, created (days ago), [(item, qty, promised in days, work order)], status.
 # The numbers PO-4500123/124/126/127/128 match the ERP extract that Sentinel's impact view shows.
@@ -147,12 +147,12 @@ class Seeder:
     def masters(self):
         s = self.session
         ledger.ensure_chart(s)
-        ledger.post(s, ago(250), "OPENING", "OPEN-BANK", "Opening bank balance (mock)", SETUP,
+        ledger.post(s, ago(250), "OPENING", "OPEN-BANK", "Opening bank balance", SETUP,
                     [("1000", OPENING_BANK, 0, None, None), ("3000", 0, OPENING_BANK, None, None)])
         for code, name, location in STORES:
             s.add(models.Store(store_code=code, name=name, location=location))
         for vid, name, city, category, msme, terms, lead, _ in VENDORS:
-            s.add(models.Vendor(vendor_id=vid, name=name, city=city, category=category, gstin=f"{GST_STATE[city]}MOCK{vid[2:]}A1Z{vid[-1]}",
+            s.add(models.Vendor(vendor_id=vid, name=name, city=city, category=category, gstin=f"{GST_STATE[city]}SNTL{vid[2:]}A1Z{vid[-1]}",
                                 msme=msme, payment_terms_days=terms, lead_time_days=lead, active=True))
         s.flush()
         for code, desc, cat, uom, grade, price, level, lot, lead, vendor, critical, _, _ in ITEMS:
@@ -189,7 +189,7 @@ class Seeder:
         return grns
 
     def bill_no(self, vendor_id, on_date):
-        initials = "".join(w[0] for w in self.vendors[vendor_id][1].replace("(mock)", "").replace("&", "").split())
+        initials = "".join(w[0] for w in self.vendors[vendor_id][1].replace("&", "").split())
         self.bill_count[vendor_id] = self.bill_count.get(vendor_id, 100 + int(vendor_id[-2:]) * 7) + 1
         start = int(on_date[2:4]) if int(on_date[5:7]) >= 4 else int(on_date[2:4]) - 1
         return f"{initials}/{start}{start + 1}/{self.bill_count[vendor_id]:04d}"
@@ -296,10 +296,10 @@ class Seeder:
     def requisitions(self):
         s = self.session
         procure.create_requisition(s, [{"item_code": "PL-210-02", "qty": 4, "need_by": ago(-40)}], BUYER, work_order="WO-24022",
-                                   note="Girder webs for the engine room seating (mock).", source="WORK_ORDER", created_on=ago(2))
+                                   note="Girder webs for the engine room seating.", source="WORK_ORDER", created_on=ago(2))
         pr = procure.create_requisition(s, [{"item_code": "WC-E7018-4", "qty": 60, "need_by": ago(-12)},
                                             {"item_code": "PT-EPX-PRM", "qty": 10, "need_by": ago(-15)}], STOREKEEPER,
-                                        note="Monthly consumables top-up (mock).", created_on=ago(6))
+                                        note="Monthly consumables top-up.", created_on=ago(6))
         procure.decide_requisition(pr, True, APPROVER)
 
     def run(self):
@@ -320,7 +320,7 @@ def reset(session) -> None:
 
 
 def seed(session, fresh: bool = False) -> dict:
-    """Load the demo ERP data unless it is already there. Returns what was loaded (empty when nothing was done)."""
+    """Load the ERP data unless it is already there. Returns what was loaded (empty when nothing was done)."""
     if fresh:
         reset(session)
     if session.scalar(select(func.count()).select_from(models.Vendor)):
@@ -337,6 +337,6 @@ if __name__ == "__main__":
     with SessionLocal() as session:
         loaded = seed(session, fresh="--reset" in sys.argv)
         if not loaded:
-            print("ERP demo data is already loaded; nothing changed (use --reset to load it afresh).")
+            print("ERP data is already loaded; nothing changed (use --reset to load it afresh).")
         for name, count in loaded.items():
             print(f"{name}: {count}")

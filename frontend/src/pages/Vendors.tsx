@@ -76,7 +76,7 @@ export default function Vendors() {
           options={[...new Set((vendors.data ?? []).map((v) => v.category))].sort().map((value) => ({ value }))}
           style={{ width: 220 }}
         />
-        <Typography.Text type="secondary">Grade A: on time 85% or more and rejections 2% or less. Grade B: on time 65% or more. All vendors are mock data.</Typography.Text>
+        <Typography.Text type="secondary">Grade A: on time 85% or more and rejections 2% or less. Grade B: on time 65% or more. All vendors are representative.</Typography.Text>
       </Flex>
       <Table
         size="small"

@@ -1,4 +1,4 @@
-"""pravah erp modules
+"""sentinel erp modules
 
 Revision ID: 0007
 Revises: 0006

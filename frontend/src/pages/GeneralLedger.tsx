@@ -183,7 +183,7 @@ export default function GeneralLedger() {
   return (
     <Card>
       <Typography.Paragraph type="secondary">
-        Every goods receipt, approved invoice, payment, stock issue and adjustment posts a balanced double entry here. Mock data for the prototype.
+        Every goods receipt, approved invoice, payment, stock issue and adjustment posts a balanced double entry here. Representative data.
       </Typography.Paragraph>
       <Tabs
         activeKey={tab}

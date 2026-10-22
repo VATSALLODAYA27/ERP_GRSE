@@ -8,7 +8,7 @@ from app.core import ocr
 from app.db import SessionLocal
 from app.models import Check
 from app.main import app
-from scripts.approve_demo_rules import approve
+from scripts.approve_seed_rules import approve
 from scripts.load_extract import load
 from scripts.seed_users import seed
 
@@ -91,7 +91,7 @@ def test_check_is_run_stored_and_readable(engineer, samples):
 
 def test_superseded_revision_is_blocked(engineer, samples):
     body = upload(engineer, samples / "01_GRSE-H-101_revA_superseded-revision.pdf").json()
-    assert body["verdict"] == "BLOCKED" and body["findings"][0]["clause"] == "MOCK-PROC 4.2"
+    assert body["verdict"] == "BLOCKED" and body["findings"][0]["clause"] == "REF-PROC 4.2"
 
 
 def test_bad_uploads_are_refused(engineer):
@@ -102,7 +102,7 @@ def test_bad_uploads_are_refused(engineer):
 
 def test_register_and_rules_are_served(engineer):
     assert len(engineer.get("/api/register").json()) == 4
-    assert all(rule["clause"].startswith("MOCK-") for rule in engineer.get("/api/rules").json())
+    assert all(rule["clause"].startswith("REF-") for rule in engineer.get("/api/rules").json())
 
 
 def test_a_reviewer_or_the_admin_decides_and_only_once(engineer, reviewer, admin, samples):
@@ -515,7 +515,7 @@ def test_a_rule_runs_only_while_an_approval_of_its_exact_content_stands(admin, e
     rule_ids = lambda: {f["rule_id"] for f in upload(engineer, drawing).json()["findings"]}
     state = lambda rule_id: next(r for r in engineer.get("/api/rules").json() if r["id"] == rule_id)
 
-    assert state("CHK-09")["state"] == "approved" and state("CHK-09")["approved_by"] == "demo-setup"
+    assert state("CHK-09")["state"] == "approved" and state("CHK-09")["approved_by"] == "initial-setup"
     assert state("CHK-07")["state"] == "draft" and state("CHK-07")["approved_by"] is None
     assert "CHK-09" in rule_ids()
 
@@ -530,8 +530,8 @@ def test_a_rule_runs_only_while_an_approval_of_its_exact_content_stands(admin, e
     # Withdrawn: new checks no longer run it. Approved again: they do.
     assert admin.post("/api/rules/CHK-09/withdrawal").json()["state"] == "draft"
     assert "CHK-09" not in rule_ids()
-    approved = admin.post("/api/rules/CHK-09/approval", json={"note": "Reviewed against the mock spec."}).json()
-    assert (approved["state"], approved["approved_by"], approved["approval_note"]) == ("approved", "Admin_123", "Reviewed against the mock spec.")
+    approved = admin.post("/api/rules/CHK-09/approval", json={"note": "Reviewed against the representative spec."}).json()
+    assert (approved["state"], approved["approved_by"], approved["approval_note"]) == ("approved", "Admin_123", "Reviewed against the representative spec.")
     assert "CHK-09" in rule_ids()
 
     # The rule file is edited (a different limit): the old approval no longer covers it, and it stops running until approved again.
@@ -550,7 +550,7 @@ def test_a_rule_runs_only_while_an_approval_of_its_exact_content_stands(admin, e
     assert "CHK-09" not in rule_ids()  # it runs again, and 800 mm is now within the 900 mm limit
     monkeypatch.undo()
     assert state("CHK-09")["state"] == "changed"  # back to the file's own content, which the last approval does not cover
-    admin.post("/api/rules/CHK-09/approval", json={"note": "Back to the demo values."})
+    admin.post("/api/rules/CHK-09/approval", json={"note": "Back to the starting values."})
 
     actions = {entry["action"] for entry in reviewer.get("/api/audit").json()}
     assert {"rule.approved", "rule.withdrawn"} <= actions

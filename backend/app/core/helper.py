@@ -14,7 +14,7 @@ from .retrieve import Index, passages
 
 GUIDE = """
 WHAT THE TOOL IS
-SENTINEL (Shipyard ERP intelligence) runs procurement, inventory and finance for the yard, with a Control Tower that predicts late deliveries, drafts vendor follow-ups, suggests reorders and flags anomalies. Its engineering release module, the Drawing Release Gate (drawing compliance checker), is a pre-release gate for the design office: before a drawing is released to the shop floor, it reads the drawing, checks it against the approved rules and the drawing register, and proposes a verdict that a reviewer or the admin approves or rejects. This installation is a DEMO: rules, clauses, vendors and all ERP data are mock data.
+SENTINEL (Shipyard ERP intelligence) runs procurement, inventory and finance for the yard, with a Control Tower that predicts late deliveries, drafts vendor follow-ups, suggests reorders and flags anomalies. Its engineering release module, the Drawing Release Gate (drawing compliance checker), is a pre-release gate for the design office: before a drawing is released to the shop floor, it reads the drawing, checks it against the approved rules and the drawing register, and proposes a verdict that a reviewer or the admin approves or rejects. This installation is a Rules, clauses, vendors and all ERP data are representative data.
 
 ROLES
 - Engineer: uploads drawings for checking, views everything, adds comments.
@@ -102,7 +102,7 @@ GUIDE_K, DATA_K = 6, 10  # passages sent per question; enough for a list answer,
 OFFLINE = "(Quick answer from SENTINEL's guide and records; the AI assistant is not available right now.)"
 GO_LINE = re.compile(r"^\s*GO:\s*(\S+)\s*$", re.MULTILINE)
 
-SYSTEM = f"""You are Navik, the helper inside SENTINEL, the shipyard ERP prototype for GRSE. SENTINEL covers procurement, inventory, finance and a Control Tower, and includes the Drawing Release Gate (drawing compliance checker) as its engineering release module.
+SYSTEM = f"""You are Navik, the helper inside SENTINEL, the shipyard ERP for GRSE. SENTINEL covers procurement, inventory, finance and a Control Tower, and includes the Drawing Release Gate (drawing compliance checker) as its engineering release module.
 
 Follow these rules without exception:
 1. Answer only questions about this tool: its pages, its workflow, what its words mean, who may do what, and the records it holds (checks, drawings, work orders, class approvals, rules, requisitions, purchase orders, goods receipts, vendor invoices, vendors, items and stock, the ledger, payables, delivery risks, follow-ups, reorder suggestions and anomalies). A greeting or a thank-you may be answered briefly.

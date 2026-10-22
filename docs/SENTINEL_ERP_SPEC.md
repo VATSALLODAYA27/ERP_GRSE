@@ -1,8 +1,8 @@
-# PRAVAH ERP: build spec (shared contract for backend and frontend)
+# SENTINEL ERP: build spec (shared contract for backend and frontend)
 
-PRAVAH turns this app (today: Sentinel, a drawing release gate) into an intelligent shipyard ERP prototype for the
-GRSE GAINS 2026 entry "PRAVAH: agentic AI control tower for shipyard material flow". Sentinel stays as one module
-("Engineering release"). **All data is mock data.** Never use real company names: vendors are invented and marked (mock).
+SENTINEL turns this app (today: Sentinel, a drawing release gate) into an intelligent shipyard ERP for the
+GRSE GAINS 2026 entry "SENTINEL: agentic AI control tower for shipyard material flow". Sentinel stays as one module
+("Engineering release"). **All data is representative data.** Never use real company names: vendors are invented and marked.
 
 Stack stays the same: FastAPI + SQLAlchemy 2 + Alembic migrations (backend/), React 18 + antd 5 + react-query + react-router
 (frontend/). No new dependencies on either side. Follow the existing code style (plain words, short docstrings, `shortcut:`
@@ -128,9 +128,9 @@ answer "Which purchase orders are at risk?" and "Take me to the purchase orders"
 
 ## 3. Seed data (backend/scripts/seed_erp.py, idempotent; run after load_extract)
 
-Dates are relative to today (so the demo is always current). Deterministic (random.Random(26)).
-- 12 vendors with invented names marked (mock), across Kolkata, Durgapur, Jamshedpur, Visakhapatnam, Pune, Chennai, Mumbai; some MSME.
-- ~40 items. Include the BOM part numbers from demo/register/bill_of_materials.csv as item codes (PL-101-01 deck plate AH36 12 mm,
+Dates are relative to today (so the walkthrough is always current). Deterministic (random.Random(26)).
+- 12 vendors with invented names marked, across Kolkata, Durgapur, Jamshedpur, Visakhapatnam, Pune, Chennai, Mumbai; some MSME.
+- ~40 items. Include the BOM part numbers from setup/register/bill_of_materials.csv as item codes (PL-101-01 deck plate AH36 12 mm,
   HP-101-02, FB-101-03, BK-101-04, PL-102-01, and the H-102/H-103 parts) so Sentinel's drawings and the ERP join up; plus
   sections, pipes, valves, cables, welding consumables, paint, outfitting items. Several critical items.
 - 4 stores; opening stock for most items (some below reorder level, one or two at zero).
@@ -144,12 +144,12 @@ Dates are relative to today (so the demo is always current). Deterministic (rand
 - 2 requisitions (one SUBMITTED from a work order, one APPROVED not yet converted).
 - Issues of steel to WO-24019/WO-24020 from the steel store.
 - Run the anomaly scan once at the end.
-Also: demo/run-demo.ps1 and demo/record_demo.py's start_tool should run `scripts.seed_erp` after load_extract (backend agent edits
-run-demo.ps1 only; the recorder is ours).
+Also: setup/run.ps1 and setup/record_walkthrough.py's start_tool should run `scripts.seed_erp` after load_extract (backend agent edits
+run.ps1 only; the recorder is ours).
 
 ## 4. Screens (frontend)
 
-Branding: product name "PRAVAH" with the subtitle "Shipyard ERP intelligence". Sentinel keeps its name as the
+Branding: product name "SENTINEL" with the subtitle "Shipyard ERP intelligence". Sentinel keeps its name as the
 "Engineering release (Sentinel)" group. Update the sider header, the browser title, and the login page headline
 ("Material moves on time. Every rupee is accounted for.").
 

@@ -9,11 +9,11 @@ load_dotenv(BACKEND_DIR / ".env")  # optional local settings and secrets; see .e
 # The rule file is part of the tool.
 RULES_FILE = BACKEND_DIR / "data" / "rules" / "rules.json"
 
-# Everything a demo needs lives in demo/: the mock ERP extract, the mock drawings and the demo logins.
-DEMO_DIR = BACKEND_DIR.parent / "demo"
-EXTRACT_DIR = DEMO_DIR / "register"
-SAMPLES_DIR = DEMO_DIR / "drawings"
-SEED_USERS_FILE = DEMO_DIR / "demo_logins.json"
+# Everything setup needs lives in setup/: the representative ERP extract, the representative drawings and the default logins.
+SETUP_DIR = BACKEND_DIR.parent / "setup"
+EXTRACT_DIR = SETUP_DIR / "register"
+SAMPLES_DIR = SETUP_DIR / "drawings"
+SEED_USERS_FILE = SETUP_DIR / "logins.json"
 
 # Everything the tool itself writes: its database and the uploaded drawings.
 VAR_DIR = Path(os.environ.get("GRSE_VAR_DIR", BACKEND_DIR / "var"))

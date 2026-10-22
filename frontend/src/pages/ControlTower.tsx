@@ -198,7 +198,7 @@ function DeliveriesAtRisk({ me }: { me: User }) {
 
 function Outbox({ me }: { me: User }) {
   const followups = useFollowups('DRAFT')
-  const approve = useAction(erp.approveFollowup, AFFECTS.intel, 'Approved to send. Recorded in the audit log; nothing is e-mailed from the prototype.')
+  const approve = useAction(erp.approveFollowup, AFFECTS.intel, 'Approved to send. Recorded in the audit log; nothing is e-mailed automatically.')
   const dismiss = useAction(erp.dismissFollowup, AFFECTS.intel, 'Follow-up dismissed')
   const drafts = (followups.data ?? []).filter((f) => f.status === 'DRAFT')
   const decides = can.approve(me)

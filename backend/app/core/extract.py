@@ -1,6 +1,6 @@
 """Read a drawing PDF into plain data.
 
-Template-based: the title-block position, labels and box sizes below describe the MOCK sheet layout.
+Template-based: the title-block position, labels and box sizes below describe the representative sheet layout.
 A real GRSE title block needs its own values here.
 
 Two ways in, one result:
@@ -38,7 +38,7 @@ STANDARD_LINE_OCR = re.compile(r"^(?P<name>[A-Z][A-Z0-9 .\-]+?)[,.]? EDITION (?P
 OCR_DPI = 200
 CELL_DPI = 400  # a single table cell is re-read at a larger size
 REREAD = {"material": False, "thickness_mm": True, "qty": True}  # columns re-read when empty -> digits only?
-ROW_PITCH = 16  # points between parts-list rows on the mock sheet
+ROW_PITCH = 16  # points between parts-list rows on the representative sheet
 LAST_COLUMN_WIDTH = 60  # points; the last column has no next heading to end it
 MIN_LINE_CONFIDENCE = 60  # loose text on the sheet needs more certainty than text found under a known label
 

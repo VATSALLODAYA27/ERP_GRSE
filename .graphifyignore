@@ -4,8 +4,8 @@ node_modules/
 dist/
 var/
 __pycache__/
-demo/drawings/
-demo/*.mp4
-demo/*.webm
+setup/drawings/
+setup/*.mp4
+setup/*.webm
 docs/*.pdf
 docs/*.docx

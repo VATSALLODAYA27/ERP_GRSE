@@ -200,7 +200,7 @@ def build(filename: str, title: str, subtitle: str, about: str, contents: list, 
         canvas.line(20 * mm, 14 * mm, A4[0] - 20 * mm, 14 * mm)
         canvas.setFont(BODY, 8)
         canvas.setFillColor(GREY)
-        canvas.drawString(20 * mm, 9.5 * mm, f"Drawing Compliance Checker  ·  {title}  ·  all data shown is mock data")
+        canvas.drawString(20 * mm, 9.5 * mm, f"Drawing Compliance Checker  ·  {title}  ·  all data shown is representative data")
         canvas.drawRightString(A4[0] - 20 * mm, 9.5 * mm, f"Page {doc.page}")
         canvas.restoreState()
 
@@ -212,14 +212,14 @@ def build(filename: str, title: str, subtitle: str, about: str, contents: list, 
         canvas.setFont(BOLD, 13)
         canvas.drawString(20 * mm, A4[1] - 30 * mm, "DRAWING COMPLIANCE CHECKER")
         canvas.setFont(BODY, 10.5)
-        canvas.drawString(20 * mm, A4[1] - 38 * mm, "A release gate for drawings: concept demo for GRSE GAINS 2026")
+        canvas.drawString(20 * mm, A4[1] - 38 * mm, "A release gate for drawings: concept walkthrough for GRSE GAINS 2026")
         canvas.drawString(20 * mm, A4[1] - 46 * mm, f"Prepared {DATE}")
         canvas.restoreState()
 
     front = [Spacer(1, 54 * mm), P(title, "title"), P(subtitle, "subtitle"), Spacer(1, 8 * mm)]
     front += note(about)
-    front += note("<b>Everything in this project is mock data.</b> The drawings, the drawing register, the bills of materials, the work orders and the "
-                  "rules with their clause numbers were invented for the demonstration. None of it comes from GRSE or from a classification society.", WARN)
+    front += note("<b>Everything in this project is representative data.</b> The drawings, the drawing register, the bills of materials, the work orders and the "
+                  "rules with their clause numbers were invented for the walkthrough. None of it comes from GRSE or from a classification society.", WARN)
     front += [Spacer(1, 3 * mm), P("<b>Contents</b>", "h2")] + [P(f"{i}.&nbsp;&nbsp;{entry}", "toc") for i, entry in enumerate(contents, 1)]
     front += [PageBreak()]
 
@@ -238,7 +238,7 @@ def overview():
         "The problem, and what the tool does about it", "Words you need", "Where it sits beside the ERP", "Who uses it",
         "The flow of one check", "The rules and the verdict", "Comparing two revisions", "Connecting the drawing to the ERP",
         "Scanned drawings", "The optional AI summary", "The release decision and the audit log", "Keeping the data safe",
-        "The screens", "The demo kit", "How it was built", "What is not done: honest limits",
+        "The screens", "The walkthrough kit", "How it was built", "What is not done: honest limits",
     ]
     s = []
 
@@ -302,8 +302,8 @@ def overview():
         ["Materials management", "Purchase orders", "Change impact"],
         ["Quality / class approvals", "What was submitted to class or the customer", "Class approval tracking, a warning on the gate"],
     ], [0.30, 0.38, 0.32])
-    s += [P("Which ERP GRSE runs, and the exact format of its exports, were not verified. The demo uses seven invented CSV files in "
-            + c("demo/register/") + " that stand in for the extract.")]
+    s += [P("Which ERP GRSE runs, and the exact format of its exports, were not verified. The walkthrough uses seven invented CSV files in "
+            + c("setup/register/") + " that stand in for the extract.")]
 
     s += [H1("4. Who uses it")]
     s += table([
@@ -341,21 +341,21 @@ def overview():
             "<i>exactly as written</i>: if the clause, the severity or a parameter is later edited, the rule stops running until it is approved again. Who approved "
             "what, and when, is in the audit log.")]
     s += table([
-        ["Rule", "What it catches", "Severity", "Mock clause"],
-        ["REG-01", "A superseded revision, or a drawing that is not in the register", "Critical", "MOCK-PROC 4.2"],
-        ["REG-02", "The title block's status disagrees with the register", "Major", "MOCK-PROC 4.3"],
-        ["CHK-01", "The drawing is not approved for production", "Critical", "MOCK-CUST 2.1"],
-        ["CHK-02", "The drawing cites an old edition of a standard", "Major", "MOCK-CLS 1.1.4"],
-        ["CHK-03", "A material grade that is not on the allowed list", "Critical", "MOCK-CLS 3.2.1"],
-        ["CHK-04", "Plate thinner than the minimum", "Critical", "MOCK-CLS 3.4.2"],
-        ["CHK-05", "A mandatory note is missing", "Major", "MOCK-CUST 5.3"],
-        ["CHK-06", "A recommended note is missing", "Minor", "MOCK-CUST 5.4"],
-        ["BOM-01", "The parts list disagrees with the ERP bill of materials", "Major", "MOCK-PROC 5.2"],
-        ["CHK-08", "Plate thinner than the thickness <i>calculated</i> for its structural zone", "Critical", "MOCK-CLS 4.2.3"],
-        ["CHK-09", "Stiffener spacing over the limit for its zone", "Major", "MOCK-CLS 4.3.1"],
-        ["CHK-10", "Thick plate in a zone that is not of a higher steel grade", "Critical", "MOCK-CLS 3.2.4"],
-        ["CHK-11", "A count stated in a note disagrees with the parts list", "Major", "MOCK-PROC 5.4"],
-        ["CHK-07", "A draft rule, shown only to demonstrate that unapproved rules are skipped", "(not run)", "MOCK-CUST 5.6"],
+        ["Rule", "What it catches", "Severity", "Representative clause"],
+        ["REG-01", "A superseded revision, or a drawing that is not in the register", "Critical", "REF-PROC 4.2"],
+        ["REG-02", "The title block's status disagrees with the register", "Major", "REF-PROC 4.3"],
+        ["CHK-01", "The drawing is not approved for production", "Critical", "REF-CUST 2.1"],
+        ["CHK-02", "The drawing cites an old edition of a standard", "Major", "REF-CLS 1.1.4"],
+        ["CHK-03", "A material grade that is not on the allowed list", "Critical", "REF-CLS 3.2.1"],
+        ["CHK-04", "Plate thinner than the minimum", "Critical", "REF-CLS 3.4.2"],
+        ["CHK-05", "A mandatory note is missing", "Major", "REF-CUST 5.3"],
+        ["CHK-06", "A recommended note is missing", "Minor", "REF-CUST 5.4"],
+        ["BOM-01", "The parts list disagrees with the ERP bill of materials", "Major", "REF-PROC 5.2"],
+        ["CHK-08", "Plate thinner than the thickness <i>calculated</i> for its structural zone", "Critical", "REF-CLS 4.2.3"],
+        ["CHK-09", "Stiffener spacing over the limit for its zone", "Major", "REF-CLS 4.3.1"],
+        ["CHK-10", "Thick plate in a zone that is not of a higher steel grade", "Critical", "REF-CLS 3.2.4"],
+        ["CHK-11", "A count stated in a note disagrees with the parts list", "Major", "REF-PROC 5.4"],
+        ["CHK-07", "A draft rule, shown only to show that unapproved rules are skipped", "(not run)", "REF-CUST 5.6"],
     ], [0.11, 0.53, 0.14, 0.22])
     s += table([
         ["Worst finding", "Verdict", "Meaning"],
@@ -368,7 +368,7 @@ def overview():
             "on a formula. The tool handles that shape of rule. Each drawing's title block names its <b>zone</b>, its <b>hull number</b> and its "
             "<b>stiffener spacing</b>; the ERP extract gives the ship's rule length for that hull; and a rule can carry one formula per zone.")]
     s += table([
-        ["Zone", "Mock formula for required plate thickness (mm)", "For the demo ship (L = 142 m, s = 700 mm)"],
+        ["Zone", "Representative formula for required plate thickness (mm)", "For the walkthrough ship (L = 142 m, s = 700 mm)"],
         ["Deck", "4.5 + 0.04 × L", "10.2 mm"],
         ["Side shell", "5.0 + 0.045 × L", "11.4 mm"],
         ["Bulkhead", "4.0 + 0.005 × s", "7.5 mm"],
@@ -401,7 +401,7 @@ def overview():
             "A part found on one side only is also reported. Each difference is a finding under rule BOM-01.")]
     s += [H2("Who is affected when a revision changes? (Change impact)")]
     s += [P("From the parts that changed between two revisions the tool lists the work orders still released against the old revision and the open purchase "
-            "orders for those parts. For the sample pair it reports: <i>the change from revision A to B affects 1 work order and 2 open purchase orders</i>.")]
+            "orders for those parts. For the example pair it reports: <i>the change from revision A to B affects 1 work order and 2 open purchase orders</i>.")]
     s += [H2("May this work order be released? (The release gate)")]
     s += table([
         ["Fact", "Blocked when", "Warn when"],
@@ -464,7 +464,7 @@ def overview():
         "When the code needs different tables, the server upgrades the database at start-up <b>without losing rows</b>, and copies the database to a backups folder first.",
         "An automated test fails if anyone changes a table without writing the matching upgrade step.",
         "Reloading the ERP extract replaces only what came from the ERP. Checks, decisions and an admin's register edits are left alone.",
-        "The demo's reset option moves old data to an archive folder; it does not delete it.",
+        "The walkthrough's reset option moves old data to an archive folder; it does not delete it.",
     ])
 
     s += [H1("13. The screens")]
@@ -485,8 +485,8 @@ def overview():
     ], [0.22, 0.78])
     s += figure("update-drawing.jpg", "Figure 9. An admin moving a drawing to a new revision. The old revision becomes superseded and its work orders are blocked.", 0.85)
 
-    s += [H1("14. The demo kit")]
-    s += [P("Everything needed to try the tool is in the " + c("demo/") + " folder: a start script, the logins, the mock ERP files, eight mock drawings, a "
+    s += [H1("14. The walkthrough kit")]
+    s += [P("Everything needed to try the tool is in the " + c("setup/") + " folder: a start script, the logins, the representative ERP files, eight representative drawings, a "
             "4.5-minute captioned video and the script that records it.")]
     s += table([
         ["Drawing", "What it shows", "Verdict"],
@@ -498,8 +498,8 @@ def overview():
         ["06, 07", "Scans of drawings 01 and 02.", "Blocked, Pass"],
         ["08", "A scan of drawing 03; OCR misreads the grade, for the person to correct.", "Blocked"],
     ], [0.24, 0.58, 0.18])
-    s += figure("drawing-bow-block.png", "Figure 10. One of the mock drawings: an invented bow block with a title block, parts list, notes and item balloons.", 0.80)
-    s += [P("To start it, run " + c(r".\demo\run-demo.ps1") + " from the project folder in PowerShell. A step-by-step walkthrough is in " + c("demo/README.md") + ".")]
+    s += figure("drawing-bow-block.png", "Figure 10. One of the representative drawings: an invented bow block with a title block, parts list, notes and item balloons.", 0.80)
+    s += [P("To start it, run " + c(r".\setup\run.ps1") + " from the project folder in PowerShell. A step-by-step walkthrough is in " + c("setup/README.md") + ".")]
 
     s += [H1("15. How it was built")]
     s += table([
@@ -507,24 +507,24 @@ def overview():
         ["1", "The checking engine: reading the title block and parts list, the register check, the rules, the verdict, and an API."],
         ["2", "The web app, sign-in with roles, the reviewer's decision and the audit log."],
         ["3", "Revision comparison: the change list and the red/green overlay."],
-        ["4", "BOM consistency, change impact, the release gate, class approval tracking, the drawing detail page; the demo folder."],
+        ["4", "BOM consistency, change impact, the release gate, class approval tracking, the drawing detail page; the walkthrough folder."],
         ["—", "A durable database with upgrades and backups; the admin role, reviewer registration and comments."],
         ["5", "Scanned drawings: OCR, confirmation, straightening two scans before comparing."],
         ["6", "The optional AI summary and its safeguards."],
-        ["—", "The sample video, ship-style mock drawings, and register editing for the admin."],
+        ["—", "The example video, ship-style representative drawings, and register editing for the admin."],
         ["—", "Rules that depend on zone and on a calculated formula; rule approval in the tool."],
     ], [0.10, 0.90])
 
     s += [H1("16. What is not done: honest limits")]
     s += bullets([
-        "<b>The title-block reading is tied to the mock sheet layout.</b> A real GRSE drawing will not be read correctly until its layout is mapped.",
-        "<b>The rules are mock.</b> The clause numbers, limits and formulas are invented. The tool can now apply rules by zone and by formula, and records who "
-        "approved each, but real content must be written and approved by a naval architect. The demo approvals were made by a setup script, not by an expert.",
+        "<b>The title-block reading is tied to the representative sheet layout.</b> A real GRSE drawing will not be read correctly until its layout is mapped.",
+        "<b>The rules are representative.</b> The clause numbers, limits and formulas are invented. The tool can now apply rules by zone and by formula, and records who "
+        "approved each, but real content must be written and approved by a naval architect. The walkthrough approvals were made by a setup script, not by an expert.",
         "<b>The zone comes from the title block</b>, one zone per drawing. A drawing covering several zones, or a rule needing more ship data than length, needs more work.",
         "<b>The tool reads text and compares pictures.</b> It does not understand a hull form, a weld symbol or a dimension line.",
         "<b>Only the first sheet</b> of a drawing is read, and revisions are ordered as single letters.",
         "<b>The scans tested are clean simulated ones.</b> Real scans with stamps, handwriting and folds will need more corrections.",
-        "<b>Sign-in is basic:</b> no lockout after wrong passwords, and the demo passwords sit in a plain file.",
+        "<b>Sign-in is basic:</b> no lockout after wrong passwords, and the walkthrough passwords sit in a plain file.",
         "<b>The web app has no automated tests</b>; the backend has 60.",
         "<b>Nothing was validated with GRSE data.</b> That is the next stage.",
     ])
@@ -551,7 +551,7 @@ def code_explanation():
         ["Layer", "Choice", "Why"],
         ["API", "FastAPI on uvicorn, Pydantic for request and response shapes", "Typed contracts, and a built-in test page at /docs."],
         ["Database", "SQLite through SQLAlchemy, Alembic for migrations", "One file and nothing to install; tables change without losing data; one setting moves it to PostgreSQL."],
-        ["PDF", "PyMuPDF", "Reads text with positions, finds tables, renders pages to images, and draws the mock drawings."],
+        ["PDF", "PyMuPDF", "Reads text with positions, finds tables, renders pages to images, and draws the representative drawings."],
         ["OCR", "Tesseract, called as a program", "Runs on the machine, gives a confidence per word. No Python OCR library is needed."],
         ["Images", "NumPy and OpenCV", "The pixel overlay, and straightening two scans against each other."],
         ["AI summary", "Any service speaking the OpenAI chat format (Groq by default), called with httpx", "Optional; the provider and model are settings."],
@@ -587,9 +587,9 @@ def code_explanation():
         impact.py        work orders and purchase orders affected by a change
         gate.py          may this work order be released?
         explain.py       the optional AI summary
-    data/rules/rules.json   the mock rules
+    data/rules/rules.json   the representative rules
     migrations/             one file per change to the database tables
-    scripts/                make_samples, load_extract, seed_users, approve_demo_rules, new_migration
+    scripts/                make_samples, load_extract, seed_users, approve_seed_rules, new_migration
     tests/                  test_core, test_api, test_db
     var/                    created at run time: database, backups, uploads
   frontend/
@@ -597,7 +597,7 @@ def code_explanation():
       main.tsx  App.tsx  theme.ts  api.ts  index.css
       components/          layout, tags, tables, sheet viewer, decision panel, forms
       pages/               one file per screen
-  demo/                     start script, logins, mock ERP files, mock drawings, video
+  setup/                     start script, logins, representative ERP files, representative drawings, video
   docs/                     these documents and the script that builds them
   learning.md  README.md""", wrap=110)
 
@@ -644,7 +644,7 @@ def code_explanation():
 
     s += [H1("5. Backend: foundations")]
     s += [H2("config.py: where things are")]
-    s += [P("Paths and limits in one place. Read-only inputs live in " + c("demo/") + " and " + c("backend/data/rules/") + "; everything the tool writes lives in "
+    s += [P("Paths and limits in one place. Read-only inputs live in " + c("setup/") + " and " + c("backend/data/rules/") + "; everything the tool writes lives in "
             + c("backend/var/") + ". Optional settings come from environment variables or a " + c(".env") + " file: " + c("GRSE_DATABASE_URL") + ", "
             + c("GRSE_EXPLAINER_KEY / _URL / _MODEL") + ", " + c("GRSE_TESSERACT") + ", " + c("GRSE_COOKIE_SECURE") + ", " + c("GRSE_VAR_DIR") + ".")]
     s += [H2("db.py: the database, and upgrading it safely")]
@@ -665,7 +665,7 @@ def code_explanation():
 
     s += [H1("6. Backend: the checking engine")]
     s += [H2("extract.py: from PDF to plain data")]
-    s += [P("The reading is <b>template-based</b>: a few constants at the top of the file describe the mock sheet, namely where the title block sits, the labels "
+    s += [P("The reading is <b>template-based</b>: a few constants at the top of the file describe the representative sheet, namely where the title block sits, the labels "
             "printed in it, and how wide the value under each label is. To support a real title block, these constants are what changes.")]
     s += excerpt("backend/app/core/extract.py", "_title_block")
     s += [P("For a vector PDF the parts list comes from PyMuPDF's table finder. For a scan, " + c("_parts_scan") + " rebuilds it from word positions: the heading row gives "
@@ -684,13 +684,13 @@ def code_explanation():
   "name": "Plate thickness meets the absolute minimum",
   "type": "min_thickness",
   "severity": "critical",
-  "clause": "MOCK-CLS 3.4.2",
-  "standard": "MOCK-CLS STEEL SHIP RULES",
+  "clause": "REF-CLS 3.4.2",
+  "standard": "REF-CLS STEEL SHIP RULES",
   "edition": 2024,
   "params": { "min_mm": 6 },
-  "demo_state": "approved"
+  "seed_state": "approved"
 }''')
-    s += [P("The file <i>defines</i> a rule; it does not approve it. (" + c("demo_state") + " only tells the demo's setup script which rules to approve the first time.)")]
+    s += [P("The file <i>defines</i> a rule; it does not approve it. (" + c("seed_state") + " only tells the walkthrough's setup script which rules to approve the first time.)")]
     s += [P("The runner ties the two together, and the verdict is three lines:")]
     s += excerpt("backend/app/core/rules.py", "run_checks")
     s += excerpt("backend/app/core/rules.py", "verdict")
@@ -799,7 +799,7 @@ def code_explanation():
         [c("components/"), "Reusable parts: " + c("AppLayout") + ", " + c("Tags") + ", " + c("ChecksTable") + ", " + c("GateTable") + ", " + c("SheetViewer") + ", "
                            + c("RevisionChanges") + ", " + c("ErpChecks") + ", " + c("DecisionPanel") + ", " + c("Comments") + ", " + c("Explanation") + ", " + c("DrawingForm") + "."],
         [c("pages/"), "One file per screen. A page asks for data with a hook and arranges components."],
-        [c("index.css"), "The few styles Ant Design does not cover: the demo banner, sheet markers, print layout."],
+        [c("index.css"), "The few styles Ant Design does not cover: the walkthrough banner, sheet markers, print layout."],
     ], [0.20, 0.80])
     s += [H2("Three ideas worth understanding")]
     s += bullets([
@@ -815,7 +815,7 @@ def code_explanation():
     s += [H1("11. Tests")]
     s += table([
         ["File", "What it proves"],
-        [c("tests/test_core.py"), "The engine: what is read from each sample; the verdict and rule set for each; per-part findings; the BOM comparison; the gate's "
+        [c("tests/test_core.py"), "The engine: what is read from each example; the verdict and rule set for each; per-part findings; the BOM comparison; the gate's "
                                   "decision table; change impact; the change list and the overlay; scans read like their originals; crooked scans are straightened; "
                                   "zone and formula rules, and that a formula can contain arithmetic and nothing else."],
         [c("tests/test_api.py"), "The API: everything needs a sign-in; each role's limits; uploads and bad uploads; decisions and their safeguards; registration and "
@@ -823,7 +823,7 @@ def code_explanation():
                                  "a rule running only while an approval of its exact content stands."],
         [c("tests/test_db.py"), "Migrations build exactly the tables the code expects; upgrading keeps the data and takes a backup."],
     ], [0.24, 0.76])
-    s += [P("Run them from " + c("backend/") + " with " + c(r".\.venv\Scripts\python.exe -m pytest -q") + ". Tests use a temporary database and temporary sample drawings, never the real "
+    s += [P("Run them from " + c("backend/") + " with " + c(r".\.venv\Scripts\python.exe -m pytest -q") + ". Tests use a temporary database and temporary example drawings, never the real "
             "data. The OCR tests are skipped on a machine without Tesseract. The suite never calls the real model service.")]
 
     s += [H1("12. How to change things")]
@@ -832,13 +832,13 @@ def code_explanation():
         ["Add a rule of an existing kind", "Add an entry to " + c("backend/data/rules/rules.json") + " with a clause, severity and parameters, then approve it as admin on the Rule Library screen."],
         ["Change a rule's limit or formula", "Edit its entry in the rule file. It shows as “changed” and stops running until an admin approves it again."],
         ["Add a new kind of check", "Write a function in " + c("core/rules.py") + " with the " + c("(d, erp, p)") + " signature that yields (evidence, position); add it to " + c("CHECKS") + "; add a test."],
-        ["Support a real title block", "Change " + c("TITLE_BLOCK") + ", " + c("FIELDS") + " and the parts-list headings at the top of " + c("core/extract.py") + "; regenerate or add samples; update the tests' expected values."],
+        ["Support a real title block", "Change " + c("TITLE_BLOCK") + ", " + c("FIELDS") + " and the parts-list headings at the top of " + c("core/extract.py") + "; regenerate or add examples; update the tests' expected values."],
         ["Add a column or a table", "Edit " + c("models.py") + ", run " + c("scripts.new_migration") + ", read the generated migration, run the tests."],
         ["Give rules more ERP data", "Add it to the " + c("erp") + " bundle built in " + c("api/checks.py: create_check") + "; every check function already receives the bundle."],
         ["Add a screen", "A file in " + c("pages/") + ", a route in " + c("App.tsx") + ", a menu entry in " + c("components/AppLayout.tsx") + ", and a hook in " + c("api.ts") + " if it needs new data."],
         ["Change the AI model or provider", "Set " + c("GRSE_EXPLAINER_MODEL") + " / " + c("GRSE_EXPLAINER_URL") + " in " + c("backend/.env") + ". No code change."],
         ["Move to PostgreSQL", "Set " + c("GRSE_DATABASE_URL") + " and install a PostgreSQL driver. The migrations run there too."],
-        ["Re-record the video, rebuild these documents", c("python demo/record_demo.py") + " (with the backend environment) and " + c("python docs/build_docs.py") + "."],
+        ["Re-record the video, rebuild these documents", c("python setup/record_walkthrough.py") + " (with the backend environment) and " + c("python docs/build_docs.py") + "."],
     ], [0.30, 0.70])
 
     s += [H1("13. Known shortcuts")]

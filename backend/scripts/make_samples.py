@@ -1,6 +1,6 @@
-"""Generate the MOCK sample drawings. These are invented sheets, not GRSE documents.
+"""Generate the representative drawings. These are invented sheets, not GRSE documents.
 
-Writes to demo/drawings/. Run from backend/:  python -m scripts.make_samples
+Writes to setup/drawings/. Run from backend/:  python -m scripts.make_samples
 """
 from pathlib import Path
 
@@ -15,7 +15,7 @@ MARGIN = 20
 RIGHT = W - MARGIN - 480  # left edge of the right-hand column: parts list, notes, title block
 
 NOTES = ["ALL DIMENSIONS IN MM", "WELDING AS PER APPROVED WPS", "EDGE PREPARATION AS PER SHIPYARD STANDARD", "DO NOT SCALE DRAWING"]
-STANDARDS = ["MOCK-CLS STEEL SHIP RULES, EDITION 2024", "MOCK-CUST HULL SPEC 100, EDITION 2023"]
+STANDARDS = ["REF-CLS STEEL SHIP RULES, EDITION 2024", "REF-CUST HULL SPEC 100, EDITION 2023"]
 
 SHEETS = [
     # Superseded revision of H-101: fine on its own, but the register has moved on to B.
@@ -34,13 +34,13 @@ SHEETS = [
     # Wrong grade, plate too thin, old class edition, a mandatory note missing.
     dict(slug="wrong-grade-thin-plate", hull="3030", zone="BULKHEAD", spacing=700, shape="bulkhead", frames=(34, 34), no="GRSE-H-102", rev="A", title="BULKHEAD FR 34 STIFFENING", status="APPROVED", material="S275", thk=5,
          date="2026-07-20", stiffeners=5, notes=[NOTES[0], NOTES[2], NOTES[3]],
-         standards=["MOCK-CLS STEEL SHIP RULES, EDITION 2021", STANDARDS[1]], parts=[
+         standards=["REF-CLS STEEL SHIP RULES, EDITION 2021", STANDARDS[1]], parts=[
              (1, "PL-102-01", "BULKHEAD PLATE", "S275", 5, 2),
              (2, "HP-102-02", "HP STIFFENER 140X7", "AH36", 7, 5)]),
     # Only non-blocking problems: old customer spec edition, a recommended note missing.
     dict(slug="old-standard-edition", hull="3030", zone="SIDE SHELL", spacing=800, shape="block", frames=(40, 48), no="GRSE-H-103", rev="A", title="SIDE SHELL PLATING FR 40-48", status="APPROVED", material="DH36", thk=14,
          date="2026-08-04", stiffeners=9, notes=NOTES[:3],
-         standards=[STANDARDS[0], "MOCK-CUST HULL SPEC 100, EDITION 2020"], parts=[
+         standards=[STANDARDS[0], "REF-CUST HULL SPEC 100, EDITION 2020"], parts=[
              (1, "PL-103-01", "SHELL PLATE", "DH36", 14, 3),
              (2, "HP-103-02", "HP STIFFENER 200X10", "DH36", 10, 9)]),
     # Issued for information only: not released for production.
@@ -170,7 +170,7 @@ def draw(spec: dict, out_dir: Path) -> Path:
         page.insert_text((x, y), str(s), fontsize=size)
 
     page.draw_rect((MARGIN, MARGIN, W - MARGIN, H - MARGIN), width=1.5)
-    text(MARGIN + 10, MARGIN + 16, "MOCK DRAWING FOR DEMONSTRATION - NOT A GRSE DOCUMENT", 9)
+    text(MARGIN + 10, MARGIN + 16, "REPRESENTATIVE DRAWING - NOT A GRSE DOCUMENT", 9)
 
     # The structure, as an isometric view with item balloons.
     (draw_bulkhead if spec["shape"] == "bulkhead" else draw_hull_block)(page, text, spec)
@@ -219,7 +219,7 @@ def draw(spec: dict, out_dir: Path) -> Path:
         text(x + 3, y + 9, label, 6)
         text(x + 3, y + 23, value, 10)
 
-    # Numbered in the order the demo walks through them, with the scenario in the name.
+    # Numbered in walkthrough order, with the scenario in the name.
     path = out_dir / f"{SHEETS.index(spec) + 1:02d}_{spec['no']}_rev{spec['rev']}_{spec['slug']}.pdf"
     doc.save(path)
     doc.close()

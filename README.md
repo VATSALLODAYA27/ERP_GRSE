@@ -2,9 +2,9 @@
 
 A pre-release gate for drawings: it compares each drawing with the drawing register and a fixed, clause-cited rule set, and gives a verdict before a work order is released.
 
-**All rules, clauses, drawings and ERP data in this repository are mock data.** None of it comes from GRSE or from a real classification society.
+**All rules, clauses, drawings and ERP data in this repository are representative data.** None of it comes from GRSE or from a real classification society.
 
-See [learning.md](learning.md) for an explanation of how it works and what has been built so far, and [demo/README.md](demo/README.md) for a guided demo.
+See [learning.md](learning.md) for an explanation of how it works and what has been built so far, and [setup/README.md](setup/README.md) for a guided walkthrough.
 
 ## Documents
 
@@ -19,10 +19,10 @@ Python 3.12 or newer and Node.js. To check scanned drawings, also install [Tesse
 ## Quickest way to try it
 
 ```powershell
-.\demo\run-demo.ps1
+.\setup\run.ps1
 ```
 
-This installs what is missing, loads the mock data, builds the web app and opens it. The sections below are for development.
+This installs what is missing, loads the representative data, builds the web app and opens it. The sections below are for development.
 
 ## First-time setup
 
@@ -31,8 +31,8 @@ From `backend/` (PowerShell):
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe -m scripts.load_extract     # copies the mock ERP extract from demo/register into var/app.db
-.\.venv\Scripts\python.exe -m scripts.seed_users       # creates the demo users
+.\.venv\Scripts\python.exe -m scripts.load_extract     # copies the representative ERP extract from setup/register into var/app.db
+.\.venv\Scripts\python.exe -m scripts.seed_users       # creates the default users
 ```
 
 From `frontend/`:
@@ -57,7 +57,7 @@ From `frontend/`:
 npm run dev
 ```
 
-Open http://localhost:5173 and sign in. The demo users (an admin, a reviewer and two engineers) and their passwords are in `demo/demo_logins.json`. Upload any PDF from `demo/drawings/` under New Check.
+Open http://localhost:5173 and sign in. The default users (an admin, a reviewer and two engineers) and their passwords are in `setup/logins.json`. Upload any PDF from `setup/drawings/` under New Check.
 
 To run as a single process instead, run `npm run build` in `frontend/`, start only the backend, and open http://127.0.0.1:8000.
 

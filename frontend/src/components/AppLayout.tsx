@@ -51,7 +51,7 @@ const NAV: { group: string; items: NavItem[] }[] = [
       { key: '/purchase-orders', label: 'Purchase Orders', hint: 'Orders with vendors, their deliveries and delivery risk', icon: <ShoppingCartOutlined /> },
       { key: '/receipts', label: 'Goods Receipts', hint: 'What arrived at the stores, accepted and rejected', icon: <InboxOutlined /> },
       { key: '/invoices', label: 'Vendor Invoices', hint: 'Invoices matched against the order and the receipt', icon: <FileTextOutlined /> },
-      { key: '/vendors', label: 'Vendors', hint: 'Vendor scorecards: delivery, quality and spend (mock data)', icon: <ShopOutlined /> },
+      { key: '/vendors', label: 'Vendors', hint: 'Vendor scorecards: delivery, quality and spend (representative data)', icon: <ShopOutlined /> },
     ],
   },
   {

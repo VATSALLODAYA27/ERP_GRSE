@@ -1,8 +1,8 @@
-"""Records demo/sample-demo-video.mp4: a scripted walk through the tool in a real browser, with captions.
+"""Records setup/walkthrough.mp4: a scripted walk through the tool in a real browser, with captions.
 
 Needs once:   backend\\.venv\\Scripts\\python.exe -m pip install playwright
-Run from the project folder:   backend\\.venv\\Scripts\\python.exe demo\\record_demo.py
-Add --short for the one-minute version, saved as demo/short-demo-video.mp4.
+Run from the project folder:   backend\\.venv\\Scripts\\python.exe setup\\record_walkthrough.py
+Add --short for the one-minute version, saved as setup/walkthrough.mp4.
 
 It drives the Edge browser that is already on Windows (nothing else is downloaded) and starts its own copy of the
 tool on port 8020 with an empty, temporary database, so your own checks and decisions are not touched.
@@ -24,23 +24,23 @@ import cv2
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
-BACKEND, DRAWINGS = ROOT / "backend", ROOT / "demo" / "drawings"
+BACKEND, DRAWINGS = ROOT / "backend", ROOT / "walkthrough" / "drawings"
 PYTHON = BACKEND / ".venv" / "Scripts" / "python.exe"
 PORT = 8020
 BASE = f"http://127.0.0.1:{PORT}"
 SIZE = {"width": 1366, "height": 768}
-OUTPUT = ROOT / "demo" / "sample-demo-video.mp4"
-LOGINS = {u["username"]: u["password"] for u in json.loads((ROOT / "demo" / "demo_logins.json").read_text(encoding="utf-8"))}
+OUTPUT = ROOT / "walkthrough" / "walkthrough.mp4"
+LOGINS = {u["username"]: u["password"] for u in json.loads((ROOT / "walkthrough" / "logins.json").read_text(encoding="utf-8"))}
 
 # A caption bar drawn by the page itself, so it is part of the recording. It survives moving between screens.
 CAPTION_JS = """
 if (window.top !== window) throw new Error('captions belong to the main page only, not to an embedded PDF viewer');
 window.__caption = (text) => {
-  sessionStorage.setItem('demoCaption', text);
-  let bar = document.getElementById('demo-caption');
+  sessionStorage.setItem('captionText', text);
+  let bar = document.getElementById('walkthrough-caption');
   if (!bar) {
     bar = document.createElement('div');
-    bar.id = 'demo-caption';
+    bar.id = 'walkthrough-caption';
     bar.style.cssText = 'position:fixed;left:50%;bottom:18px;transform:translateX(-50%);max-width:80%;z-index:99999;' +
       'background:rgba(12,34,67,.94);color:#fff;font:600 18px/1.35 Segoe UI,sans-serif;padding:10px 22px;border-radius:8px;' +
       'box-shadow:0 4px 18px rgba(0,0,0,.35);text-align:center;pointer-events:none';
@@ -49,13 +49,13 @@ window.__caption = (text) => {
   bar.textContent = text;
   bar.style.display = text ? 'block' : 'none';
 };
-document.addEventListener('DOMContentLoaded', () => window.__caption(sessionStorage.getItem('demoCaption') || ''));
+document.addEventListener('DOMContentLoaded', () => window.__caption(sessionStorage.getItem('captionText') || ''));
 """
 
 
 def start_tool(var_dir: Path) -> subprocess.Popen:
     env = {**os.environ, "GRSE_VAR_DIR": str(var_dir)}
-    for script in ("scripts.load_extract", "scripts.seed_users", "scripts.approve_demo_rules"):
+    for script in ("scripts.load_extract", "scripts.seed_users", "scripts.approve_seed_rules"):
         subprocess.run([PYTHON, "-m", script], cwd=BACKEND, env=env, check=True, capture_output=True)
     server = subprocess.Popen([PYTHON, "-m", "uvicorn", "app.main:app", "--port", str(PORT)], cwd=BACKEND, env=env,
                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -70,7 +70,7 @@ def start_tool(var_dir: Path) -> subprocess.Popen:
     raise RuntimeError("The tool did not start.")
 
 
-class Demo:
+class Walkthrough:
     def __init__(self, page):
         self.page = page
 
@@ -131,10 +131,10 @@ class Demo:
         return page.url.split("?")[0]
 
 
-def walkthrough(d: Demo):
+def walkthrough(d: Walkthrough):
     page = d.page
     page.goto(BASE)
-    d.say("Drawing Compliance Checker: a release gate for drawings. All data shown is mock data.", 4.5)
+    d.say("Drawing Compliance Checker: a release gate for drawings. All data shown is representative data.", 4.5)
 
     # --- Engineer ---
     d.say("An engineer signs in.", 2)
@@ -205,8 +205,8 @@ def walkthrough(d: Demo):
     page.get_by_role("tab", name="Register", exact=True).click()
     page.locator("#register_name").press_sequentially("R. Sen", delay=50)
     page.locator("#register_username").press_sequentially("r.sen", delay=50)
-    page.locator("#register_password").press_sequentially("recorded-demo-only", delay=20)
-    page.locator("#register_confirm").press_sequentially("recorded-demo-only", delay=20)
+    page.locator("#register_password").press_sequentially("recorded-walkthrough-only", delay=20)
+    page.locator("#register_confirm").press_sequentially("recorded-walkthrough-only", delay=20)
     page.get_by_role("button", name="Request account").click()
     page.get_by_text("created").wait_for()
     d.pause(3)
@@ -277,18 +277,18 @@ def walkthrough(d: Demo):
     d.menu("Audit Log")
     d.say("Every sign-in, check, correction, decision and comment is in the audit log.", 5.5)
     d.menu("Rule Library")
-    d.say("The rules are fixed and clause-cited. These are mock rules; real ones need a naval architect.", 5)
+    d.say("The rules are fixed and clause-cited. These are representative rules; real ones need a naval architect.", 5)
     d.scroll(420, 1)
     d.say("A rule runs only once it is approved. The approval covers the rule exactly as written.", 4)
     page.get_by_role("button", name="Approve", exact=True).first.click()
-    page.get_by_label("Approval note").press_sequentially("Reviewed against the mock customer spec.", delay=25)
+    page.get_by_label("Approval note").press_sequentially("Reviewed against the representative customer spec.", delay=25)
     d.pause(1.5)
     page.locator(".ant-popconfirm").get_by_role("button", name="Approve").click()
     d.pause(3)
-    d.say("End of the demo.", 2.5)
+    d.say("End of the walkthrough.", 2.5)
 
 
-def short_walkthrough(d: Demo):
+def short_walkthrough(d: Walkthrough):
     """About a minute: one check from upload to decision, the release gate, the helper and dark mode."""
     page = d.page
     page.goto(BASE)
@@ -359,8 +359,8 @@ def to_mp4(webm: Path, mp4: Path) -> bool:
 def main():
     # "--short" records the one-minute version to its own file; the full walkthrough is the default.
     short = "--short" in sys.argv
-    output = OUTPUT.with_name("short-demo-video.mp4") if short else OUTPUT
-    work = Path(tempfile.mkdtemp(prefix="grse-demo-video-"))
+    output = OUTPUT.with_name("walkthrough.mp4") if short else OUTPUT
+    work = Path(tempfile.mkdtemp(prefix="grse-walkthrough-video-"))
     server = start_tool(work / "var")
     try:
         with sync_playwright() as p:
@@ -370,7 +370,7 @@ def main():
             page = context.new_page()
             page.set_default_timeout(20000)
             try:
-                (short_walkthrough if short else walkthrough)(Demo(page))
+                (short_walkthrough if short else walkthrough)(Walkthrough(page))
             finally:
                 page.screenshot(path=str(work / "last-screen.png"))  # where it stopped, if a step failed
                 context.close()  # this is what finishes writing the video

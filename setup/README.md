@@ -1,19 +1,19 @@
-# Demo kit
+# Setup kit
 
-Everything needed to try the Drawing Compliance Checker. **All of it is mock data**: invented drawings, an invented register, invented clause numbers. None of it comes from GRSE.
+Everything needed to try the Drawing Compliance Checker. **All of it is representative data**: invented drawings, an invented register, invented clause numbers. None of it comes from GRSE.
 
 ## What is in this folder
 
 | Item | What it is |
 |---|---|
-| `run-demo.ps1` | Starts the tool and opens it in the browser |
-| `demo_logins.json` | The demo users and their passwords: an admin, a reviewer and two engineers |
-| `register/` | The mock ERP extract. The tool reads these files and never writes to them |
-| `drawings/` | Mock drawings to upload under **New Check**, numbered in demo order. They are isometric views of invented hull structure |
-| `sample-demo-video.webm` / `.mp4` | A 5-minute captioned recording of the walkthrough below. The WebM is smaller and opens in any web browser; the MP4 is for other players |
-| `record_demo.py` | Re-records that video. It uses its own temporary copy of the tool, so your data is not touched |
+| `run.ps1` | Starts the tool and opens it in the browser |
+| `logins.json` | The default users and their passwords: an admin, a reviewer and two engineers |
+| `register/` | The representative ERP extract. The tool reads these files and never writes to them |
+| `drawings/` | Representative drawings to upload under **New Check**, numbered in walkthrough order. They are isometric views of invented hull structure |
+| `walkthrough.webm` / `.mp4` | A 5-minute captioned recording of the walkthrough below. The WebM is smaller and opens in any web browser; the MP4 is for other players |
+| `record_walkthrough.py` | Re-records that video. It uses its own temporary copy of the tool, so your data is not touched |
 
-### `register/`: the mock ERP extract
+### `register/`: the representative ERP extract
 
 | File | Holds |
 |---|---|
@@ -26,9 +26,9 @@ Everything needed to try the Drawing Compliance Checker. **All of it is mock dat
 | `class_approvals.csv` | Drawings submitted to class or customer, and the outcome |
 | `ship_particulars.csv` | Each hull's rule length, used by the calculated thickness rule |
 
-You can edit these in Excel or a text editor to try other situations; rerun `run-demo.ps1` to load the changes.
+You can edit these in Excel or a text editor to try other situations; rerun `run.ps1` to load the changes.
 
-### `drawings/`: what each one demonstrates
+### `drawings/`: what each one shows
 
 | File | Expected verdict | What it shows |
 |---|---|---|
@@ -48,7 +48,7 @@ Drawings 06 to 08 need Tesseract installed (see the main README).
 From the project folder, in PowerShell:
 
 ```powershell
-.\demo\run-demo.ps1
+.\setup\run.ps1
 ```
 
 Earlier checks, decisions and comments are kept between runs. To start from an empty tool, add `-Reset`: the earlier data is moved to `backend\var-archive\`, not deleted.
@@ -58,7 +58,7 @@ The first run installs packages and takes a few minutes. The browser opens at ht
 If PowerShell refuses to run the script, use:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\demo\run-demo.ps1
+powershell -ExecutionPolicy Bypass -File .\setup\run.ps1
 ```
 
 ## Who can do what
@@ -73,7 +73,7 @@ A new engineer or reviewer can register on the sign-in page (*Register*, then ch
 
 ## Walkthrough (about 10 minutes)
 
-Sign in with the `engineer` login from `demo_logins.json`.
+Sign in with the `engineer` login from `logins.json`.
 
 1. **Release Gate, before any check.** Open *Release Gate*. Two work orders are already blocked from the register alone: WO-24018 was released against revision A while the register is on B, and WO-24022 uses a drawing that is only "for information". The rest warn that their revision has not been checked.
 2. **A superseded drawing.** *New Check* → upload drawing `01`. Verdict: **Blocked**, citing the document-control clause.
@@ -111,7 +111,7 @@ Sign in with the admin login.
 2. Open GRSE-H-102 → *Update drawing* → change the current revision to `B` → *Save changes*. Revision A becomes superseded in its history.
 3. *Release Gate*: WO-24020, released against revision A, is now blocked.
 
-These edits change the tool's copy of the register only, and rerunning the demo does not undo them.
+These edits change the tool's copy of the register only, and rerunning the walkthrough does not undo them.
 
 ## Rules by zone, and approving rules (admin)
 

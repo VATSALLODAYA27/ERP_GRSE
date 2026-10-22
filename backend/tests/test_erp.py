@@ -1,6 +1,6 @@
-"""PRAVAH ERP: the books balance, the match and the detectors work on the seeded demo, and roles are enforced.
+"""SENTINEL ERP: the books balance, the match and the detectors work on the seeded data, and roles are enforced.
 
-Runs against the demo seed (scripts/seed_erp.py). No AI service is ever called: the key is cleared for every test,
+Runs against the seed (scripts/seed_erp.py). No AI service is ever called: the key is cleared for every test,
 and the tests that need a model reply use a fake one.
 """
 import json
@@ -16,7 +16,7 @@ from app.core import explain, intel, ledger, procure
 from app.db import SessionLocal
 from app.main import app
 from app.models import JournalEntry, StockMove
-from scripts.approve_demo_rules import approve
+from scripts.approve_seed_rules import approve
 from scripts.load_extract import load
 from scripts.seed_erp import seed as seed_erp
 from scripts.seed_users import seed
@@ -97,10 +97,10 @@ def test_seeded_books_balance_and_every_entry_balances(engineer):
     assert abs(payables["total"] - owed) < 0.05
     for v in payables["vendors"]:
         assert abs(v["current"] + v["d1_30"] + v["d31_60"] + v["d61_90"] + v["over_90"] - v["balance"]) < 0.05
-    # The demo story: one bill due in three days, one overdue, all vendors mock.
+    # The seeded story: one bill due in three days, one overdue, all vendors invented.
     assert any(v["next_due"] == days_from_today(3) for v in payables["vendors"])
     assert any(v["d1_30"] > 0 for v in payables["vendors"])
-    assert all(v["name"].endswith("(mock)") for v in engineer.get("/api/vendors").json())
+    assert all(v["name"] for v in engineer.get("/api/vendors").json())
 
 
 def test_each_anomaly_detector_fires_on_the_seeded_cases(engineer):
@@ -158,7 +158,7 @@ def test_reorder_net_need_and_suggested_quantity(engineer):
     assert rows
     for r in rows:
         assert r["net_need"] == round(r["demand_open"] + r["reorder_level"] - r["on_hand"] - r["on_order"] - r["on_requisition"], 6) > 0
-        assert r["suggested_qty"] >= r["net_need"] and r["vendor_name"].endswith("(mock)")
+        assert r["suggested_qty"] >= r["net_need"] and r["vendor_name"]
     hp = next(r for r in rows if r["item_code"] == "HP-101-02")
     # WO-24019 needs 7 on its bill of materials, 1 was issued; 1 in stock and 6 on order against a reorder level of 4.
     assert (hp["demand_open"], hp["on_hand"], hp["on_order"], hp["net_need"], hp["suggested_qty"]) == (6, 1, 6, 3, 6)
@@ -257,7 +257,7 @@ def test_an_exception_needs_a_reason_and_books_the_price_variance(engineer, revi
     detail = engineer.get(f"/api/invoices/{bill['inv_no']}").json()
     assert detail["match"]["ok"] is False and detail["match"]["lines"][0]["price_variance_pct"] == 6.0
     assert reviewer.post(f"/api/invoices/{bill['inv_no']}/approve", json={}).status_code == 422
-    approved = reviewer.post(f"/api/invoices/{bill['inv_no']}/approve", json={"reason": "Mill surcharge agreed by phone (mock)"})
+    approved = reviewer.post(f"/api/invoices/{bill['inv_no']}/approve", json={"reason": "Mill surcharge agreed by phone"})
     assert approved.status_code == 200 and approved.json()["approval_reason"].startswith("Mill surcharge")
     variance = next(l for l in approved.json()["journal"][0]["lines"] if l["account_code"] == "5200")
     assert variance["debit"] == 7500  # 6% of ₹1,25,000
@@ -298,7 +298,7 @@ def test_roles_and_the_approval_limit(engineer, reviewer, admin):
     flag = engineer.get("/api/intel/anomalies", params={"status": "OPEN"}).json()[0]
     assert engineer.post(f"/api/intel/anomalies/{flag['id']}/resolve", json={"note": "ok"}).status_code == 403
     assert reviewer.post(f"/api/intel/anomalies/{flag['id']}/resolve", json={"note": ""}).status_code == 422
-    resolved = reviewer.post(f"/api/intel/anomalies/{flag['id']}/resolve", json={"note": "Chased by phone (mock)"})
+    resolved = reviewer.post(f"/api/intel/anomalies/{flag['id']}/resolve", json={"note": "Chased by phone"})
     assert resolved.json()["status"] == "RESOLVED" and resolved.json()["resolved_by"] == "reviewer"
     assert engineer.post("/api/intel/anomalies/scan").json() == {"added": 0}  # a resolved flag is not raised again
     assert engineer.post("/api/stock/adjust", json={"item_code": "OF-LAD-SS", "store_code": "MW-GEN", "qty": 1}).status_code == 403
@@ -365,7 +365,7 @@ def test_followups_are_drafted_from_facts_and_never_sent(engineer, reviewer, mon
 
     monkeypatch.setattr(config, "EXPLAINER_KEY", "test-key-not-real")
     monkeypatch.setattr(explain.httpx, "post", fake_post)
-    sent["reply"] = "Subject: PO-4500123 dispatch\n\nDear supplier, please confirm the dispatch of PL-101-01 for WO-24019.\n\nProcurement team (PRAVAH demo)"
+    sent["reply"] = "Subject: PO-4500123 dispatch\n\nDear supplier, please confirm the dispatch of PL-101-01 for WO-24019.\n\nProcurement team (SENTINEL walkthrough)"
     model = engineer.post("/api/intel/followups/draft", json={"po_no": "PO-4500123"}).json()["created"][0]
     assert model["written_by"] == "model" and model["subject"] == "PO-4500123 dispatch"
     facts = sent["body"]["messages"][1]["content"]
