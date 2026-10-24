@@ -29,10 +29,10 @@ A shipyard cuts steel from drawings. A drawing changes over time: revision A is 
 | Database | SQLite through SQLAlchemy, with Alembic migrations | One file, nothing to install; table changes are applied without losing data; can move to PostgreSQL by setting `GRSE_DATABASE_URL` |
 | PDF reading | PyMuPDF | Reads text with its position on the page, reads tables, renders pages to images |
 | Scanned drawings | Tesseract (OCR program installed on the machine) and OpenCV | Tesseract reads the text in a picture and says how sure it is; OpenCV straightens two scans against each other. Both run locally |
-| Frontend (Phase 2) | React + TypeScript + Ant Design, styled like our Gemini samples | Navy sidebar, white cards, demo banner, coloured status pills |
+| Frontend (Phase 2) | React + TypeScript + Ant Design, styled like our Gemini examples | Navy sidebar, white cards, walkthrough banner, coloured status pills |
 | Explainer | Hosted model on Groq (`openai/gpt-oss-20b` by default) | No local model, so the laptop does not heat up; it only rewords changes and never decides; any OpenAI-style service can be swapped in by settings |
 | Rules | Fixed code + a JSON file of rules | Same drawing always gives the same result; no AI opinion in the verdict |
-| Data | All mock | Demo does not need GRSE data; every screen and report says so |
+| Data | All representative | Walkthrough does not need GRSE data; every screen and report says so |
 
 ## 4. How one check works
 
@@ -94,11 +94,11 @@ Only approved rules run. Approval is given in the tool by an admin and covers th
 
 Grade and thickness are checked in the title block and on every row of the parts list, so a finding names the exact part.
 
-## 5. The mock data
+## 5. The representative data
 
-Everything a demo needs is in the top-level `demo/` folder; `demo/README.md` has a step-by-step walkthrough and `demo/run-demo.ps1` starts the tool.
+Everything a walkthrough needs is in the top-level `setup/` folder; `setup/README.md` has a step-by-step walkthrough and `setup/run.ps1` starts the tool.
 
-**Sample drawings** (`demo/drawings/`, made by `backend/scripts/make_samples.py`), numbered in demo order with the scenario in the name:
+**Example drawings** (`setup/drawings/`, made by `backend/scripts/make_samples.py`), numbered in walkthrough order with the scenario in the name:
 
 | File | What is wrong with it | Verdict |
 |---|---|---|
@@ -111,9 +111,9 @@ Everything a demo needs is in the top-level `demo/` folder; `demo/README.md` has
 | `07_GRSE-H-101_revB_scanned-copy.pdf` | A scan of drawing 02 | Pass |
 | `08_GRSE-H-102_revA_scanned-copy.pdf` | A scan of drawing 03; OCR misreads the grade `S275` as `$275` | Blocked |
 
-**Mock ERP extract** (`demo/register/`): seven CSV files: `drawing_register`, `drawing_revisions`, `engineering_change_notes`, `bill_of_materials`, `work_orders`, `purchase_orders` and `class_approvals`. All seven are now used.
+**Representative ERP extract** (`setup/register/`): seven CSV files: `drawing_register`, `drawing_revisions`, `engineering_change_notes`, `bill_of_materials`, `work_orders`, `purchase_orders` and `class_approvals`. All seven are now used.
 
-**Demo logins** (`demo/demo_logins.json`): one reviewer and two engineers.
+**Walkthrough logins** (`setup/logins.json`): one reviewer and two engineers.
 
 ## 6. Where things are
 
@@ -140,22 +140,22 @@ backend/
 │       ├── impact.py      work orders and purchase orders affected by a revision change
 │       ├── gate.py        may this work order be released? Clear / Warn / Blocked
 │       └── explain.py     asks a hosted model to reword the change list (optional)
-├── data/rules/rules.json  MOCK rules
+├── data/rules/rules.json  REF rules
 ├── .env.example           the optional settings, with no secrets in it; copy to .env to use
 ├── migrations/            one file per change to the database tables, applied in order
 ├── scripts/
-│   ├── make_samples.py    draws the sample PDFs
+│   ├── make_samples.py    draws the example PDFs
 │   ├── load_extract.py    copies the CSV files into the database
-│   ├── seed_users.py      creates the demo users
+│   ├── seed_users.py      creates the default users
 │   └── new_migration.py   drafts a migration after the tables in models.py change
 ├── tests/                 automated checks of the engine and the API
 └── var/                   created at run time: the database, its backups and uploaded files
 
-demo/                      everything for a demo (see demo/README.md)
-├── run-demo.ps1           starts the tool
-├── demo_logins.json       DEMO users and their passwords
-├── register/              MOCK ERP CSV files
-└── drawings/              MOCK drawings to upload
+setup/                      everything for a walkthrough (see setup/README.md)
+├── run.ps1           starts the tool
+├── logins.json       default users and their passwords
+├── register/              REF ERP CSV files
+└── drawings/              REF drawings to upload
 
 frontend/
 ├── vite.config.ts         dev server; forwards /api to the backend
@@ -223,7 +223,7 @@ Uploads are refused if they are over 25 MB, are not PDFs, or have no readable te
 
 | Role | Can do | How the account is created |
 |---|---|---|
-| Engineer | Upload drawings for checking, view everything, comment | Registers on the sign-in page, then waits for an admin to approve (demo ones come from the logins file) |
+| Engineer | Upload drawings for checking, view everything, comment | Registers on the sign-in page, then waits for an admin to approve (walkthrough ones come from the logins file) |
 | Reviewer | Upload drawings for checking, view everything, comment, read the audit log, and approve or reject a check that someone else uploaded. Cannot change rules or the register | Registers on the sign-in page, then waits for an admin to approve |
 | Admin | Everything, plus approve, disable and re-enable accounts, and add or update drawings in the register | From the logins file only; nobody can register as admin |
 
@@ -298,7 +298,7 @@ Two details make the overlay trustworthy:
 
 **Which revision is "the previous one"?** If you upload one with the drawing, that one. Otherwise the tool uses the latest earlier revision of the same drawing that has already been checked. If there is none, the tab says so.
 
-**The ERP's side of the story.** The mock extract has engineering change notes (what changed, when, why). The matching note is shown above the comparison, so a reviewer can see whether the drawing really changed the way the ERP says it did.
+**The ERP's side of the story.** The representative extract has engineering change notes (what changed, when, why). The matching note is shown above the comparison, so a reviewer can see whether the drawing really changed the way the ERP says it did.
 
 The comparison is information for the reviewer. It never changes the verdict.
 
@@ -351,7 +351,7 @@ An automated test compares the tables the migrations build with the tables the c
 
 **What refreshing the page keeps.** The page itself holds almost nothing; it asks the server for data each time. Three things used to reset on refresh and now do not: you stay signed in (cookie), the report stays on the tab you had open (the tab is part of the address, e.g. `?tab=bom`), and a half-typed decision reason is kept for that browser tab.
 
-**`run-demo.ps1 -Reset`** no longer deletes anything. It moves the old data to `backend/var-archive/<date-time>/` and starts with an empty tool.
+**`run.ps1 -Reset`** no longer deletes anything. It moves the old data to `backend/var-archive/<date-time>/` and starts with an empty tool.
 
 **Limits to know.** SQLite is one file on one machine: back up `backend/var/` like any important folder. For several servers or many simultaneous users, point `GRSE_DATABASE_URL` at PostgreSQL; the migrations work there too.
 
@@ -371,7 +371,7 @@ How a scan is read (`core/ocr.py`, `core/extract.py`):
 
 Reading a scan takes roughly 5 to 10 seconds.
 
-**Why a person must confirm.** OCR makes mistakes that matter. On our sample it reads the steel grade `S275` as `$275`. So for a scan the New Check screen shows the title-block values in editable boxes, marks any below 90% confidence, and shows the scan beside them. The check runs only after the person presses *Confirm these values and run the check*, and the server refuses a scan that has not been confirmed. If a value was corrected, the report shows both: the corrected value and what OCR read. The audit log lists each correction.
+**Why a person must confirm.** OCR makes mistakes that matter. On our example it reads the steel grade `S275` as `$275`. So for a scan the New Check screen shows the title-block values in editable boxes, marks any below 90% confidence, and shows the scan beside them. The check runs only after the person presses *Confirm these values and run the check*, and the server refuses a scan that has not been confirmed. If a value was corrected, the report shows both: the corrected value and what OCR read. The audit log lists each correction.
 
 **What is not confirmed.** The parts list and the notes are used as OCR read them. The report says so in a banner. A misread there can produce a false finding (for example a thickness that could not be read), which is why the banner tells the reviewer to compare such findings with the sheet.
 
@@ -405,7 +405,7 @@ How that is enforced, not just promised:
 
 ### Phase 1 — checking engine and API (done, 12 Oct 2026)
 
-Built: database tables, mock extract and its loader, five sample drawings, title-block and parts-list reading, seven check types with nine mock rules, verdict logic, five API routes, and 15 automated tests, all passing. One sample was also uploaded to the running server and returned the expected verdict.
+Built: database tables, representative extract and its loader, five example drawings, title-block and parts-list reading, seven check types with nine representative rules, verdict logic, five API routes, and 15 automated tests, all passing. One example was also uploaded to the running server and returned the expected verdict.
 
 Things worth knowing:
 
@@ -441,20 +441,20 @@ Things worth knowing:
 - **Scanned drawings** will need the two images aligned first; that is Phase 5.
 - **The database was recreated again** for the new columns.
 
-### Demo folder and Phase 4 — the ERP story (done, 12 Oct 2026)
+### Walkthrough folder and Phase 4 — the ERP story (done, 12 Oct 2026)
 
-**Demo folder.** The mock register files, the sample drawings and the demo logins moved into `demo/`, with clearer names, a walkthrough (`demo/README.md`) and a start script (`demo/run-demo.ps1`). The code reads them from there, so there is one copy of each file. The script was run end to end on a fresh database.
+**Walkthrough folder.** The representative register files, the example drawings and the default logins moved into `setup/`, with clearer names, a walkthrough (`setup/README.md`) and a start script (`setup/run.ps1`). The code reads them from there, so there is one copy of each file. The script was run end to end on a fresh database.
 
-**Phase 4.** Built: BOM consistency (rule BOM-01 and the BOM tab), change impact (the Impact tab), the release gate (its own page, per-drawing view and an API for the ERP), class approval tracking, and a drawing detail page. 43 backend tests pass. Checked in the browser through the demo script: all five drawings uploaded, the gate showed the expected status and reasons for each work order, and the BOM, Impact, Class Approvals and drawing detail pages showed the expected rows.
+**Phase 4.** Built: BOM consistency (rule BOM-01 and the BOM tab), change impact (the Impact tab), the release gate (its own page, per-drawing view and an API for the ERP), class approval tracking, and a drawing detail page. 43 backend tests pass. Checked in the browser through the walkthrough script: all five drawings uploaded, the gate showed the expected status and reasons for each work order, and the BOM, Impact, Class Approvals and drawing detail pages showed the expected rows.
 
 Things worth knowing:
 
-- **Two verdicts changed.** Drawings `03` and `04` now also get BOM findings, because their parts lists really do disagree with the mock ERP. Their verdicts stayed Blocked and Needs review.
+- **Two verdicts changed.** Drawings `03` and `04` now also get BOM findings, because their parts lists really do disagree with the representative ERP. Their verdicts stayed Blocked and Needs review.
 - **Rules now receive the ERP's data as one bundle** (register row plus bill of materials), so future rules can use more ERP data without changing every check.
-- **The gate reads every check** to find the latest per drawing revision. Fine for a demo; with thousands of checks it needs a smarter query.
+- **The gate reads every check** to find the latest per drawing revision. Fine for a walkthrough; with thousands of checks it needs a smarter query.
 - **The gate's list of releasable statuses is written twice** (in the gate and in rule CHK-01's parameters). They must be kept the same.
 - **Impact is a snapshot**; the gate is live. The Impact tab links to the gate for the current state.
-- **The database was recreated again.** `run-demo.ps1 -Reset` now does this in one step.
+- **The database was recreated again.** `run.ps1 -Reset` now does this in one step.
 
 ### Durable database, admin role, registration, comments (done, 12 Oct 2026)
 
@@ -463,21 +463,21 @@ Built: migrations with automatic backup, an admin role with a Users page, review
 Things worth knowing:
 
 - **Reviewers can no longer upload drawings.** That is now for engineers and admins.
-- **The admin's username and password are in `demo/demo_logins.json` in plain text**, like the other demo logins. That is fine for a demo and must be changed before real use.
-- **A test account `demo.reviewer` exists and is disabled.** It was created while testing registration.
+- **The admin's username and password are in `setup/logins.json` in plain text**, like the other walkthrough logins. That is fine for a walkthrough and must be changed before real use.
+- **A test account `walkthrough.reviewer` exists and is disabled.** It was created while testing registration.
 - **Other databases are not backed up automatically**; only the SQLite file is.
 
 ### Phase 5 — scanned drawings (done, 12 Oct 2026)
 
 The first OCR library tried (RapidOCR) crashed on this laptop, so Tesseract was installed by hand and used instead.
 
-Built: reading scanned PDFs by OCR, the confirm-or-correct step before a scan is checked (enforced by the server), confidence markers, a record of what was corrected, scan-tolerant rule matching, straightening of scans before the overlay, and three scanned sample drawings. 53 backend tests pass; the scan tests are skipped on a machine without Tesseract. Checked in the browser: a scanned drawing was uploaded, its values appeared for confirmation, the check passed, and it was compared with the earlier vector revision (8 changes, overlay drawn).
+Built: reading scanned PDFs by OCR, the confirm-or-correct step before a scan is checked (enforced by the server), confidence markers, a record of what was corrected, scan-tolerant rule matching, straightening of scans before the overlay, and three scanned example drawings. 53 backend tests pass; the scan tests are skipped on a machine without Tesseract. Checked in the browser: a scanned drawing was uploaded, its values appeared for confirmation, the check passed, and it was compared with the earlier vector revision (8 changes, overlay drawn).
 
 Things worth knowing:
 
-- **The scans read as well as the originals** on the samples: same title block, same parts list, same verdicts. Real scans are worse than our simulated ones (stamps, handwriting, folds, coffee), so expect more corrections.
+- **The scans read as well as the originals** on the examples: same title block, same parts list, same verdicts. Real scans are worse than our simulated ones (stamps, handwriting, folds, coffee), so expect more corrections.
 - **A scan takes about 10 seconds to read.** The result is remembered briefly, so reading it for the confirmation screen and again for the check costs one read, not two.
-- **Only the title block can be corrected.** A misread in the parts list or notes cannot be fixed in the tool yet. On sample 08 OCR misses one thickness in the parts list, which produces a finding that is not really on the drawing.
+- **Only the title block can be corrected.** A misread in the parts list or notes cannot be fixed in the tool yet. On example 08 OCR misses one thickness in the parts list, which produces a finding that is not really on the drawing.
 - **The previous revision, if it is a scan, is not confirmed.** It is used as read.
 - **Only scanned PDFs are accepted**, not image files such as TIFF or JPEG.
 - **Tesseract must be installed on the server.** Without it, a scanned drawing is refused with a message saying so; vector drawings still work.
@@ -494,24 +494,24 @@ Things worth knowing:
 - **Free-tier limits apply.** If Groq refuses a request for being over the limit, the button shows the error and can be pressed again later.
 - **The number check is a safety net, not proof.** It catches invented numbers; it cannot catch a correct number attached to the wrong part. The change list under the summary remains the source of truth.
 
-### Sample video (done, 12 Oct 2026)
+### Example video (done, 12 Oct 2026)
 
-`demo/sample-demo-video.webm` (and `.mp4`) is a 4-minute captioned recording of the whole walkthrough: engineer, scanned drawing, a reviewer registering, reviewer decisions, admin. It is made by `demo/record_demo.py`, which drives a real browser (Edge) through the tool with a library called Playwright and records the screen. Because it is a script, the video can be re-made after any change instead of being re-filmed by hand.
+`setup/walkthrough.webm` (and `.mp4`) is a 4-minute captioned recording of the whole walkthrough: engineer, scanned drawing, a reviewer registering, reviewer decisions, admin. It is made by `setup/record_walkthrough.py`, which drives a real browser (Edge) through the tool with a library called Playwright and records the screen. Because it is a script, the video can be re-made after any change instead of being re-filmed by hand.
 
 Things worth knowing:
 
 - **The recording runs against its own temporary database** on a different port, so it never touches real data.
 - **Recording found a real bug.** The sign-in form and the register form gave their Username and Password boxes the same internal id, so a label could point at the wrong box (a problem for screen readers too). Each form now has its own ids.
 - **The captions are drawn by the page itself** during recording, so no video editing is needed.
-- **The video shows the mock data and, briefly, the AI summary**, which is a live request to Groq when a key is set.
+- **The video shows the representative data and, briefly, the AI summary**, which is a live request to Groq when a key is set.
 
 ### Ship-style drawings and register editing (done, 12 Oct 2026)
 
-**Drawings that look like ship structure.** The mock sheets were redrawn as isometric views, in the style of the mockup: a bow block and a midship block (bottom plating, longitudinal stiffeners, web frames with lightening holes, deck edge, an access opening, brackets), and a transverse bulkhead with vertical stiffeners and a door opening. Each has frame numbers and numbered item balloons pointing at the parts. The title block, parts list, notes and every expected verdict are unchanged, so all earlier tests still pass. They are still invented drawings, drawn by `backend/scripts/make_samples.py`.
+**Drawings that look like ship structure.** The representative sheets were redrawn as isometric views, in the style of the mockup: a bow block and a midship block (bottom plating, longitudinal stiffeners, web frames with lightening holes, deck edge, an access opening, brackets), and a transverse bulkhead with vertical stiffeners and a door opening. Each has frame numbers and numbered item balloons pointing at the parts. The title block, parts list, notes and every expected verdict are unchanged, so all earlier tests still pass. They are still invented drawings, drawn by `backend/scripts/make_samples.py`.
 
 What the busier drawings taught us:
 
-- **OCR got worse at the parts list.** With more lines on the sheet, Tesseract stopped reading the single digits in the quantity column. This is why step 5 above (re-reading an empty cell on its own) was added. It also fixed the missed thickness on sample 08 noted in Phase 5.
+- **OCR got worse at the parts list.** With more lines on the sheet, Tesseract stopped reading the single digits in the quantity column. This is why step 5 above (re-reading an empty cell on its own) was added. It also fixed the missed thickness on example 08 noted in Phase 5.
 - **Item balloons are not reported as text changes.** A balloon repeats an item number from the parts list, so a bare one- or two-digit number on the sheet is ignored by the comparison; the parts list already reports an added or removed item.
 - **A lone letter read from a scan is dropped**, and loose text needs 60% confidence, because holes and corners were being read as letters.
 
@@ -545,7 +545,7 @@ The formula is text in the rule file. It is never run as program code: `core/for
 - an approved rule that is then edited becomes **changed** and stops running until approved again;
 - an admin can **withdraw** a rule; checks already made keep their findings.
 
-Approvals and withdrawals are in the audit log. The demo's rules get their first approval from a setup script, recorded as "demo-setup", with a note that no naval architect reviewed them.
+Approvals and withdrawals are in the audit log. The walkthrough's rules get their first approval from a setup script, recorded as "initial-setup", with a note that no naval architect reviewed them.
 
 Things worth knowing:
 
@@ -554,7 +554,7 @@ Things worth knowing:
 - **All formulas, limits and clause numbers are invented.** The mechanism is real; the content is not.
 - **One zone per drawing**, taken from the title block.
 - **Still not done, and not possible to do honestly here:** real class rule content (it must come from a rule book and a naval architect), and understanding geometry such as weld symbols and dimensions.
-- 60 backend tests pass. The video, the demo guide and both PDFs were updated.
+- 60 backend tests pass. The video, the walkthrough guide and both PDFs were updated.
 
 ### Only the admin approves or rejects (done, 13 Oct 2026)
 
@@ -565,7 +565,7 @@ What this means in practice:
 - The decision panel on a report shows the buttons only to the admin; everyone else sees "Awaiting the admin's decision".
 - The release gate's wording now says a check "awaits the admin's decision".
 - The admin can decide a check they uploaded themselves; the audit log marks it. With one admin there is no second person to ask, so the earlier "two different people" safeguard no longer applies.
-- Older sections of this file and the demo video still say "the reviewer decides". Read that as the admin.
+- Older sections of this file and the walkthrough video still say "the reviewer decides". Read that as the admin.
 
 ### Reviewers can upload (done, 13 Oct 2026)
 
@@ -580,14 +580,14 @@ The *Register* tab on the sign-in page now asks for an account type: Engineer or
 The whole app got a new look, chosen after browsing dashboard and table designs on collectui.com. What each screen *does* is unchanged; how it is laid out and styled is new.
 
 - **Sidebar:** white instead of navy, with the pages in three groups (Workspace, Release control, Administration). The selected page is a soft blue pill. Your name, role and the sign-out button sit in a card at the bottom. A button in the top bar folds the sidebar down to icons.
-- **Top bar:** the page title with a one-line description under it, and a *New check* button that is always one click away. (The DEMO notice that used to sit here was removed later the same day; see below.)
+- **Top bar:** the page title with a one-line description under it, and a *New check* button that is always one click away. (The SETUP notice that used to sit here was removed later the same day; see below.)
 - **Dashboard:** a greeting banner with the two numbers that matter most, a *Verdicts so far* bar showing how many checks passed, need review or are blocked, four number tiles with coloured icons, then the recent checks and the checks waiting for you.
 - **Sign-in:** split in two. The left half says what the tool is for; the right half holds the sign-in and register forms. On a narrow screen only the form shows.
 - **Everywhere:** a blue accent for buttons and links, rounded corners, cards on a soft shadow, pill-shaped status tags, and small grey capitals for table headings.
 
 **Why most pages needed no edits:** Ant Design reads its colours, corner radius and spacing from one object, called *design tokens*, in `frontend/src/theme.ts`. Changing a token restyles every button, card, table and tag at once. The frame around every page (sidebar and top bar) is one component, `AppLayout.tsx`, so rebuilding it changed all twelve screens. Only the dashboard and the sign-in page were laid out again by hand. Things tokens cannot express (shadows, the banner gradient, the split sign-in page) are plain CSS in `index.css`.
 
-Changed files: `theme.ts`, `index.css`, `AppLayout.tsx`, `Dashboard.tsx`, `Login.tsx`, `ChecksTable.tsx`, `CheckReport.tsx`. The demo video and the screenshots in `docs/` still show the old look.
+Changed files: `theme.ts`, `index.css`, `AppLayout.tsx`, `Dashboard.tsx`, `Login.tsx`, `ChecksTable.tsx`, `CheckReport.tsx`. The walkthrough video and the screenshots in `docs/` still show the old look.
 
 ### Navik, the helper (done, 13 Oct 2026)
 
@@ -621,7 +621,7 @@ A switch with a sun and a moon sits in the top bar of every page and on the sign
 - **Printing is always light.** A check report printed while in dark mode is switched to light for the print and back afterwards, because paper is white.
 - **The drawing sheet stays white** in dark mode, like the paper drawing it shows.
 
-**How it works.** Colours live in two places, and the switch changes both. Ant Design's colours come from `themeFor(dark)` in `theme.ts`, which hands Ant Design its built-in dark recipe plus our own dark values. The plain-CSS parts (sidebar border, Navik, the DEMO pill, the waiting list) use *CSS variables* such as `--surface`, defined once for light and once for dark at the top of `index.css`; the switch sets `data-theme="dark"` on the page and the variables change with it.
+**How it works.** Colours live in two places, and the switch changes both. Ant Design's colours come from `themeFor(dark)` in `theme.ts`, which hands Ant Design its built-in dark recipe plus our own dark values. The plain-CSS parts (sidebar border, Navik, the SETUP pill, the waiting list) use *CSS variables* such as `--surface`, defined once for light and once for dark at the top of `index.css`; the switch sets `data-theme="dark"` on the page and the variables change with it.
 
 One thing needed care: the status colours (green, amber, red) are dark shades chosen for a white background and were hard to read on dark. In dark mode they are brightened; with the first (blue-tinted) dark palette tag text measured 5 to 1 or better, and it was not measured again after the change to black and grey.
 
@@ -633,25 +633,25 @@ One thing needed care: the status colours (green, amber, red) are dark shades ch
 
 New file: `frontend/src/components/ModeSwitch.tsx`.
 
-### DEMO notice removed (done, 13 Oct 2026)
+### SETUP notice removed (done, 13 Oct 2026)
 
-The amber "DEMO — rules, clauses and ERP data shown are mock data" notice was taken off the top bar and the sign-in page at the user's request. The data is still mock data: nothing on the screens says so any more. The Rule Library page's warning that its clause numbers, limits and formulas are invented, and not reviewed by a naval architect, was removed as well; the page now only explains how rule approval works. Anyone shown the tool must be told in person that the rules and data are mock.
+The amber "SETUP — rules, clauses and ERP data shown are representative data" notice was taken off the top bar and the sign-in page at the user's request. The data is still representative data: nothing on the screens says so any more. The Rule Library page's warning that its clause numbers, limits and formulas are invented, and not reviewed by a naval architect, was removed as well; the page now only explains how rule approval works. Anyone shown the tool must be told in person that the rules and data are representative.
 
 ### One-minute video (done, 13 Oct 2026)
 
-`demo/short-demo-video.mp4` (and a smaller `.webm`) is an 82-second tour of the new interface: sign in as admin, the dashboard, one drawing uploaded and blocked, its findings and the marked-up sheet, the admin's rejection, the Release Gate, Navik answering a question and opening a page, and dark mode. It is recorded by the same script as the long video, with one extra word:
+`setup/walkthrough.mp4` (and a smaller `.webm`) is an 82-second tour of the new interface: sign in as admin, the dashboard, one drawing uploaded and blocked, its findings and the marked-up sheet, the admin's rejection, the Release Gate, Navik answering a question and opening a page, and dark mode. It is recorded by the same script as the long video, with one extra word:
 
-    backend\.venv\Scripts\python.exe demo\record_demo.py --short
+    backend\.venv\Scripts\python.exe setup\record_walkthrough.py --short
 
-It runs on its own temporary copy of the tool, so your checks are untouched. Navik's two answers come from the live model service, so the recording needs the API key and an internet connection, and his wording differs a little each time. The long video (`sample-demo-video.mp4`) has not been re-recorded and still shows the old look.
+It runs on its own temporary copy of the tool, so your checks are untouched. Navik's two answers come from the live model service, so the recording needs the API key and an internet connection, and his wording differs a little each time. The long video (`walkthrough.mp4`) has not been re-recorded and still shows the old look.
 
 ### The name Sentinel, and the GAINS application (done, 13 Oct 2026)
 
 The project is called **Sentinel** for now. The sidebar, the sign-in page and the browser tab show the name, with "Drawing compliance checker" as a small line under it, and Navik introduces the site as Sentinel.
 
-`docs/GAINS2026_Xarka_SENTINEL.docx` and `.pdf` are a Stage-I application for GRSE's GAINS 2026 scheme. It was made from the earlier PRAVAH application: the form, the header and the eight applicant rows (name, address, contact, PAN, GST, MSME status, company profile) are untouched, and the thirteen project rows were rewritten for Sentinel. It has five figures: a workflow diagram, a diagram of how Sentinel sits beside the ERP, and three screenshots of the prototype (dashboard, a check report with findings marked on the drawing, the release gate).
+`docs/GAINS2026_Xarka_SENTINEL.docx` and `.pdf` are a Stage-I application for GRSE's GAINS 2026 scheme. It was made from the earlier SENTINEL application: the form, the header and the eight applicant rows (name, address, contact, PAN, GST, MSME status, company profile) are untouched, and the thirteen project rows were rewritten for Sentinel. It has five figures: a workflow diagram, a diagram of how Sentinel sits beside the ERP, and three screenshots of the system (dashboard, a check report with findings marked on the drawing, the release gate).
 
-Things in it that are statements about the future, not about the prototype: the on-premise deployment with models on GRSE's own hardware (the prototype's helper and explainer call a hosted service), and the budget and pilot timeline, which were copied in shape from the PRAVAH application and must be confirmed before it is sent. The document says plainly that the prototype runs on sample drawings and sample rules.
+Things in it that are statements about the future, not about the system: the on-premise deployment with models on GRSE's own hardware (the system's helper and explainer call a hosted service), and the budget and pilot timeline, which were copied in shape from the SENTINEL application and must be confirmed before it is sent. The document says plainly that the system runs on example drawings and example rules.
 
 ### Reviewers approve and reject again (done, 13 Oct 2026)
 
@@ -719,9 +719,9 @@ The explainer on the check report uses the same key rotation and second model. T
 
 Two PDFs in `docs/`, made from this file and from the code:
 
-- `1-Project-Overview-and-Flow.pdf` (13 pages): the problem, who uses the tool, the flow of one check, the rules, the gate, scans, the AI summary, the screens, the demo kit and the limits. No programming knowledge needed.
+- `1-Project-Overview-and-Flow.pdf` (13 pages): the problem, who uses the tool, the flow of one check, the rules, the gate, scans, the AI summary, the screens, the walkthrough kit and the limits. No programming knowledge needed.
 - `2-Code-Explanation.pdf` (14 pages): technology choices, a map of the files, the architecture, one upload followed through the code, the key functions, the tables, the API, the frontend, the tests, and how to change things.
 
-They are built by `python docs/build_docs.py`. The code excerpts and the list of known shortcuts in the second document are read from the source files at build time, so rebuilding after a code change keeps them accurate. The screenshots are frames from the demo video.
+They are built by `python docs/build_docs.py`. The code excerpts and the list of known shortcuts in the second document are read from the source files at build time, so rebuilding after a code change keeps them accurate. The screenshots are frames from the walkthrough video.
 
 ### All six phases are built

@@ -6,11 +6,14 @@ from sqlalchemy.orm import Session, selectinload
 
 from .. import config
 from ..auth import admin, audit, current_user, reviewer
+from ..core import intel
 from ..core.helper import ask
+from ..core.ledger import inr, qty_text
 from ..db import get_session
 from ..models import AuditEntry, Check, RuleApproval, User, now
 from ..rulebook import rulebook
 from ..schemas import AuditOut, HelperIn, RuleApprovalIn
+from . import finance
 from .erp import class_approvals, register, release_gate
 
 router = APIRouter(prefix="/api", tags=["reference"], dependencies=[Depends(current_user)])
@@ -59,6 +62,38 @@ def settings():
     return {"explainer": {"enabled": bool(config.EXPLAINER_KEY), "model": config.EXPLAINER_MODEL}}
 
 
+def erp_data(session: Session) -> list:
+    """The ERP part of what the screens show, kept short: the totals, then the records people ask about most."""
+    view = intel.overview(session)
+    k = view["kpis"]
+    risks = [r for r in intel.delivery_risk(session) if r["level"] != "LOW"]
+    reorder = intel.reorder_suggestions(session)
+    flags = intel.open_flags(session)
+    payables = finance.payables(session)
+    stock = [r for r in intel.item_rows(session) if r["status"] == "STOCK_OUT"]
+    lines = [
+        f"TOTALS ERP: {k['open_po_count']} open purchase orders worth {inr(k['open_po_value'])}; {k['at_risk_count']} deliveries at risk "
+        f"({k['high_risk_count']} high) worth {inr(k['at_risk_value'])}; stock worth {inr(k['stock_value'])}, {k['stock_outs']} items out of stock; "
+        f"{k['reorder_count']} reorder suggestions; {k['anomalies_open']} open anomalies; {k['followups_pending']} follow-ups awaiting approval; "
+        f"payables {inr(payables['total'])}, of which {inr(k['payables_due_7d'])} due within 7 days.",
+        "PURCHASE ORDERS AT RISK (highest risk first)",
+    ]
+    for r in risks[:6]:  # shortcut: the six riskiest lines; the rest are on the Control Tower and Purchase Orders pages
+        orders = f" Work orders waiting: {', '.join(r['impacted_work_orders'])}." if r["impacted_work_orders"] else ""
+        lines.append(f"- {r['po_no']}: {r['item_code']} {r['description']} from {r['vendor_name']}, {r['level']} risk {r['score']}/100, "
+                     f"promised {r['promised_date']}, predicted {r['predicted_date']}.{orders} Why: {' '.join(r['reasons'][:2])}")
+    lines.append("REORDER SUGGESTIONS")
+    lines += [f"- {r['item_code']} {r['description']}: on hand {qty_text(r['on_hand'])}, net need {qty_text(r['net_need'])}, "
+              f"suggest {qty_text(r['suggested_qty'])} {r['uom']} from {r['vendor_name']} ({inr(r['est_value'])})" for r in reorder[:6]]
+    lines.append("OPEN ANOMALIES")
+    lines += [f"- {f.severity} {f.kind.replace('_', ' ')} on {f.ref_no}: {f.message}" for f in flags[:8]]
+    lines.append("PAYABLES (by next due date)")
+    lines += [f"- {v['name']}: owed {inr(v['balance'])}, overdue {inr(v['overdue'])}, next due {v['next_due'] or 'none'}" for v in payables["vendors"][:6]]
+    lines.append("STOCK-OUTS")
+    lines += [f"- {r['item_code']} {r['description']}: 0 {r['uom']} on hand, {qty_text(r['on_order'])} on order" for r in stock] or ["- none"]
+    return lines
+
+
 def site_data(session: Session) -> str:
     """What the screens show right now, as text for the helper. Every role may see all of it on the pages."""
     checks = session.scalars(select(Check).order_by(Check.id.desc()).options(selectinload(Check.decision), selectinload(Check.findings))).all()
@@ -68,6 +103,8 @@ def site_data(session: Session) -> str:
         f"TOTALS: {len(checks)} checks, {sum(c.decision is None for c in checks)} awaiting decision. "
         f"Verdicts: {verdicts['PASS']} PASS, {verdicts['NEEDS_REVIEW']} NEEDS REVIEW, {verdicts['BLOCKED']} BLOCKED. "
         f"Work orders: {statuses['CLEAR']} Clear, {statuses['WARN']} Warn, {statuses['BLOCKED']} Blocked.",
+        # The ERP lines come early so the 12000-character cap never cuts them; they are compact by design.
+        *erp_data(session),
         "CHECKS (newest first)",
     ]
     for c in checks[:25]:  # shortcut: only the newest 25 checks are described; older ones are in the totals only

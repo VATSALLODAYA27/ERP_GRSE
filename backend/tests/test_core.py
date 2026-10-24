@@ -13,8 +13,8 @@ from app.core.gate import gate
 from app.core.impact import impact
 from app.core.rules import load_rules, run_checks, verdict
 
-# In these tests a rule counts as approved when the rule file marks it for the demo; the approval workflow itself is tested through the API.
-RULES = [rule | {"state": rule["demo_state"]} for rule in load_rules(config.RULES_FILE)]
+# In these tests a rule counts as approved when the rule file marks it at setup; the approval workflow itself is tested through the API.
+RULES = [rule | {"state": rule["seed_state"]} for rule in load_rules(config.RULES_FILE)]
 with open(config.EXTRACT_DIR / "drawing_register.csv", newline="", encoding="utf-8") as f:
     REGISTER = {row["drawing_no"]: row for row in csv.DictReader(f)}
 with open(config.EXTRACT_DIR / "bill_of_materials.csv", newline="", encoding="utf-8") as f:
@@ -51,7 +51,7 @@ def test_title_block_parts_and_standards_are_read(samples):
         ("FB-101-03", "A", "10", "8"), ("BK-101-04", "AH36", "10", "4"),
     ]
     assert [(s["name"], s["edition"]) for s in d["standards"]] == [
-        ("MOCK-CLS STEEL SHIP RULES", 2024), ("MOCK-CUST HULL SPEC 100", 2023),
+        ("REF-CLS STEEL SHIP RULES", 2024), ("REF-CUST HULL SPEC 100", 2023),
     ]
 
 
@@ -166,7 +166,7 @@ def test_bom_rule_reports_each_difference(samples):
 
 ORDER = {"order_no": "WO-1", "drawing_no": "D-1", "rev": "B", "state": "CREATED"}
 DRAWING = {"current_rev": "B", "status": "APPROVED"}
-CLASS_OK = {"submitted_to": "MOCK CLASS SOCIETY", "state": "APPROVED"}
+CLASS_OK = {"submitted_to": "REF CLASS SOCIETY", "state": "APPROVED"}
 
 
 def decided(verdict, decision=None):

@@ -1,4 +1,4 @@
-"""Create or reset the DEMO users from demo/demo_logins.json. The passwords in that file are for the demo only.
+"""Create or reset the default users from setup/logins.json. The passwords in that file are for local setup only.
 
 Run from backend/:  python -m scripts.seed_users
 """

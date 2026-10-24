@@ -15,8 +15,8 @@ from .models import RuleApproval
 
 
 def content_hash(rule: dict) -> str:
-    """A fingerprint of everything that defines the rule. "demo_state" is only a hint for setting up the demo."""
-    definition = {k: v for k, v in rule.items() if k != "demo_state"}
+    """A fingerprint of everything that defines the rule. "seed_state" is only a hint for the initial setup."""
+    definition = {k: v for k, v in rule.items() if k != "seed_state"}
     return hashlib.sha256(json.dumps(definition, sort_keys=True).encode()).hexdigest()
 
 
@@ -30,7 +30,7 @@ def rulebook(session: Session) -> list:
         approval, fingerprint = latest.get(rule["id"]), content_hash(rule)
         in_force = approval is not None and approval.withdrawn_at is None
         state = "approved" if in_force and approval.content_hash == fingerprint else "changed" if in_force else "draft"
-        rules.append({k: v for k, v in rule.items() if k != "demo_state"} | {
+        rules.append({k: v for k, v in rule.items() if k != "seed_state"} | {
             "state": state,
             "content_hash": fingerprint,
             "approved_by": approval.approved_by if in_force else None,

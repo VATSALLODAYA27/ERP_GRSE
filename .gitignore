@@ -17,5 +17,3 @@ __pycache__/
 # graphify's code map: generated, rebuilt any time with "graphify update ."
 graphify-out/
 
-# Claude Code's personal settings on this machine.
-.claude/settings.local.json

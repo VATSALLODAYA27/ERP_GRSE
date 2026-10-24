@@ -216,7 +216,9 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`/api${path}`, init)
   if (!res.ok) {
     const detail = (await res.json().catch(() => null))?.detail
-    throw new ApiError(res.status, typeof detail === 'string' ? detail : `The request failed (${res.status}).`)
+    // A form the server could not read (422) names each field that was wrong.
+    const listed = Array.isArray(detail) ? detail.map((d) => d?.msg).filter(Boolean).join('; ') : ''
+    throw new ApiError(res.status, typeof detail === 'string' ? detail : listed || `The request failed (${res.status}).`)
   }
   return res.status === 204 ? (undefined as T) : res.json()
 }
@@ -256,6 +258,10 @@ export const can = {
   editRegister: (user: User) => user.role === 'admin',
   approveRules: (user: User) => user.role === 'admin',
   recordApprovals: (user: User) => user.role === 'reviewer' || user.role === 'admin',
+  /** ERP approvals: requisitions, purchase orders, invoices, payments, stock adjustments, follow-ups, anomalies. */
+  approve: (user: User) => user.role === 'reviewer' || user.role === 'admin',
+  /** ERP requests: raise requisitions and orders, receive goods, enter invoices, issue stock. */
+  request: (_user: User) => true,
 }
 
 export const formatTime = (iso: string) => new Date(iso).toLocaleString('en-GB', { dateStyle: 'medium', timeStyle: 'short' })
